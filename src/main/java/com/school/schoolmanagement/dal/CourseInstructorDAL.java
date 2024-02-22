@@ -1,4 +1,4 @@
-package com.school.schoolmanagement.dal;
+package src.main.java.com.school.schoolmanagement.dal;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.school.schoolmanagement.models.*;
+import src.main.java.com.school.schoolmanagement.models.*;
 
 public class CourseInstructorDAL {
     private static CourseInstructorDAL instance;

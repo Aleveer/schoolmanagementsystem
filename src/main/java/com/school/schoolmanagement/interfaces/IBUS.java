@@ -1,4 +1,4 @@
-package com.school.schoolmanagement.interfaces;
+package src.main.java.com.school.schoolmanagement.interfaces;
 
 import java.util.List;
 

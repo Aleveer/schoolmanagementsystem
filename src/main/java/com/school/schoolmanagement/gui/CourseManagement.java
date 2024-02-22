@@ -1,7 +1,7 @@
-package com.school.schoolmanagement.gui;
+package src.main.java.com.school.schoolmanagement.gui;
 
-import com.school.schoolmanagement.bus.*;
-import com.school.schoolmanagement.models.*;
+import src.main.java.com.school.schoolmanagement.bus.*;
+import src.main.java.com.school.schoolmanagement.models.*;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -9,8 +9,6 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Date;
-import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 

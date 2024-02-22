@@ -1,4 +1,4 @@
-package com.school.schoolmanagement.models;
+package src.main.java.com.school.schoolmanagement.models;
 
 public class OnlineCourseModel extends CourseModel{
     private String url;

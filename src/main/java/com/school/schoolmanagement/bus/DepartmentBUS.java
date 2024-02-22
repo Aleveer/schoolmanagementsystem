@@ -1,11 +1,11 @@
-package com.school.schoolmanagement.bus;
+package src.main.java.com.school.schoolmanagement.bus;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.school.schoolmanagement.dal.DepartmentDAL;
-import com.school.schoolmanagement.models.DepartmentModel;
+import src.main.java.com.school.schoolmanagement.dal.DepartmentDAL;
+import src.main.java.com.school.schoolmanagement.models.DepartmentModel;
 
 public class DepartmentBUS {
     private final List<DepartmentModel> departmentList = new ArrayList<>();

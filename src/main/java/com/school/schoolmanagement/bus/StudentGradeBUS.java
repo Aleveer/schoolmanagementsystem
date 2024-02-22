@@ -1,12 +1,12 @@
-package com.school.schoolmanagement.bus;
+package src.main.java.com.school.schoolmanagement.bus;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.school.schoolmanagement.dal.StudentGradeDAL;
-import com.school.schoolmanagement.models.StudentGradeModel;
+import src.main.java.com.school.schoolmanagement.dal.StudentGradeDAL;
+import src.main.java.com.school.schoolmanagement.models.StudentGradeModel;
 
 public class StudentGradeBUS {
     private final List<StudentGradeModel> studentGradeList = new ArrayList<>();
