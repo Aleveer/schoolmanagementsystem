@@ -1,4 +1,4 @@
-package src.main.java.com.school.schoolmanagement.dal;
+package main.java.com.school.schoolmanagement.dal;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

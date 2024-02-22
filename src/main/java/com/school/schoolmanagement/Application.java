@@ -1,7 +1,7 @@
-package src.main.java.com.school.schoolmanagement;
+package main.java.com.school.schoolmanagement;
 
-import src.main.java.com.school.schoolmanagement.bus.CourseBUS;
-import src.main.java.com.school.schoolmanagement.models.CourseModel;
+import main.java.com.school.schoolmanagement.bus.CourseBUS;
+import main.java.com.school.schoolmanagement.models.CourseModel;
 
 public class Application {
     public static void main(String[] args) {

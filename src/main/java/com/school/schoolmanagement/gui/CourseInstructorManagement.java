@@ -1,4 +1,4 @@
-package src.main.java.com.school.schoolmanagement.gui;
+package main.java.com.school.schoolmanagement.gui;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

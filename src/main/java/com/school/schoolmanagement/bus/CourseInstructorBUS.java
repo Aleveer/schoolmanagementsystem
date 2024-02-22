@@ -1,11 +1,11 @@
-package src.main.java.com.school.schoolmanagement.bus;
+package main.java.com.school.schoolmanagement.bus;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import src.main.java.com.school.schoolmanagement.dal.CourseInstructorDAL;
-import src.main.java.com.school.schoolmanagement.models.CourseInstructorModel;
+import main.java.com.school.schoolmanagement.dal.CourseInstructorDAL;
+import main.java.com.school.schoolmanagement.models.CourseInstructorModel;
 
 public class CourseInstructorBUS {
     private final List<CourseInstructorModel> courseInstructorList = new ArrayList<>();

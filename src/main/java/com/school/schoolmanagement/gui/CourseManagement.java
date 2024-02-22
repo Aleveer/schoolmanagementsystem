@@ -1,7 +1,7 @@
-package src.main.java.com.school.schoolmanagement.gui;
+package main.java.com.school.schoolmanagement.gui;
 
-import src.main.java.com.school.schoolmanagement.bus.*;
-import src.main.java.com.school.schoolmanagement.models.*;
+import main.java.com.school.schoolmanagement.bus.*;
+import main.java.com.school.schoolmanagement.models.*;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

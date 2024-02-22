@@ -1,11 +1,11 @@
-package src.main.java.com.school.schoolmanagement.bus;
+package main.java.com.school.schoolmanagement.bus;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import src.main.java.com.school.schoolmanagement.dal.CourseDAL;
-import src.main.java.com.school.schoolmanagement.models.CourseModel;
+import main.java.com.school.schoolmanagement.dal.CourseDAL;
+import main.java.com.school.schoolmanagement.models.CourseModel;
 
 import javax.swing.*;
 

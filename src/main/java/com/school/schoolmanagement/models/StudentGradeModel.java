@@ -1,4 +1,4 @@
-package src.main.java.com.school.schoolmanagement.models;
+package main.java.com.school.schoolmanagement.models;
 
 import java.math.BigDecimal;
 
