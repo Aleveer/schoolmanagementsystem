@@ -281,8 +281,6 @@ public class CourseManagement {
         });
 
         showListCourse();
-        txtCredits.addKeyListener(new KeyAdapter() {
-        });
     }
 
     public void showListCourse() {
