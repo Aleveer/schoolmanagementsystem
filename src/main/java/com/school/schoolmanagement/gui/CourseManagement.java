@@ -52,22 +52,43 @@ public class CourseManagement {
     private JComboBox cbDepartmentName;
     private JComboBox cbStatus;
     private JButton btnSearch;
+    private JPanel pnlDepartmentName;
+    private JPanel pnlStatus;
 
     public CourseManagement() {
         pnlMain.setBorder(new EmptyBorder(10, 10, 10, 10));
         ButtonGroup btnGroup = new ButtonGroup();
         btnGroup.add(rdOnline);
         btnGroup.add(rdOnSite);
+        txtCourseId.setEditable(false);
 
         lbUrl.setVisible(false);
         txtUrl.setVisible(false);
         panel_onSite.setVisible(false);
 
         JFrame frame = new JFrame("Course Management");
+//        Set width, height for form
+        frame.setSize(1000, 500);
+//        Set name for combo box search
+        pnlDepartmentName.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createEtchedBorder(), "Department"));
+        pnlStatus.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createEtchedBorder(), "Status"));
+
         frame.setContentPane(pnlMain);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
         frame.setVisible(true);
+        frame.setLocationRelativeTo(null);
+
+//        Text field credit accepts only digit
+        txtCredits.addKeyListener(new KeyAdapter() {
+            public void keyTyped(KeyEvent e) {
+                char c = e.getKeyChar();
+                if (!Character.isDigit(c)) {
+                    e.consume();  // Ignore non-digits
+                }
+            }
+        });
 
         tblList.setModel(new DefaultTableModel(
                                  new Object[][] {
@@ -160,6 +181,7 @@ public class CourseManagement {
                     deleteCourse(courseID);
                     showListCourse();
                 }
+                clearForm();
             }
         });
 
@@ -242,7 +264,7 @@ public class CourseManagement {
                         tblList.clearSelection();
                     }
                 }
-
+                clearForm();
             }
         });
 
@@ -259,6 +281,8 @@ public class CourseManagement {
         });
 
         showListCourse();
+        txtCredits.addKeyListener(new KeyAdapter() {
+        });
     }
 
     public void showListCourse() {
