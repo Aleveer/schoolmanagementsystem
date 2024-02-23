@@ -14,6 +14,7 @@ import java.awt.event.KeyEvent;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Random;
 
 public class CourseManagement {
     private JPanel pnlMain;
@@ -130,6 +131,7 @@ public class CourseManagement {
             @Override
             public void actionPerformed(ActionEvent e) {
                 clearForm();
+                btnGroup.clearSelection();
                 showListCourse();
             }
         });
@@ -301,13 +303,16 @@ public class CourseManagement {
         txtSearch.setText("");
         cbDepartmentName.setSelectedItem("");
         cbStatus.setSelectedItem("");
-        rdOnSite.setSelected(false);
         txtLocation.setText("");
         txtDays.setText("");
         txtTime.setText("");
-        rdOnline.setSelected(false);
         lbUrl.setVisible(false);
         txtUrl.setVisible(false);
+        rdOnSite.setSelected(false);
+        lbLocation.setVisible(false);
+        lbTime.setVisible(false);
+        lbDays.setVisible(false);
+        panel_onSite.setVisible(false);
     }
 
     public void addCourse() {
@@ -316,7 +321,7 @@ public class CourseManagement {
             return;
         }
 
-        int CourseID = Integer.parseInt(txtCourseId.getText() + "");
+        int CourseID = randomCourseID();
         String title = txtTitle.getText() + "";
         int credits = Integer.parseInt(txtCredits.getText() + "");
         String departmentName = cbDepartment.getSelectedItem() + "";
@@ -338,12 +343,6 @@ public class CourseManagement {
             } else {
                 JOptionPane.showMessageDialog(null, "Thêm thất bại");
             }
-//            String url = txtUrl.getText() + "";
-//            OnlineCourseModel onlineCourse = new OnlineCourseModel(CourseID, title, credits, departmentID, url);
-//            int newOnlineCourse = OnlineCourseBUS.getInstance().addModel(onlineCourse);
-//            if (newOnlineCourse == 1) {
-//                System.out.println("Online course added");
-//            }
         } else if (rdOnSite.isSelected()) {
             String timeText = txtTime.getText();
 
@@ -437,6 +436,9 @@ public class CourseManagement {
                         txtTime.setText(onsite.getTime()+"");
                     }
                 }
+                lbLocation.setVisible(true);
+                lbDays.setVisible(true);
+                lbTime.setVisible(true);
                 panel_onSite.setVisible(true);
                 rdOnline.setSelected(false);
                 txtUrl.setVisible(false);
@@ -445,6 +447,10 @@ public class CourseManagement {
         }
     }
 
+    public int randomCourseID() {
+        Random rand = new Random();
+        return rand.nextInt(9999) + 1;
+    }
     public void showSearchResult(List<CourseModel> search) {
         DefaultTableModel model = (DefaultTableModel) tblList.getModel();
         model.setRowCount(0);
@@ -464,8 +470,6 @@ public class CourseManagement {
             });
         }
     }
-
-
 
     public static void main(String[] args) {
         new CourseManagement();
