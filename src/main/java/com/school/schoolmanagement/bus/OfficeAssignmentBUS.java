@@ -1,11 +1,11 @@
-package main.java.com.school.schoolmanagement.bus;
+package com.school.schoolmanagement.bus;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import main.java.com.school.schoolmanagement.dal.OfficeAssignmentDAL;
-import main.java.com.school.schoolmanagement.models.OfficeAssignmentModel;
+import com.school.schoolmanagement.dal.OfficeAssignmentDAL;
+import com.school.schoolmanagement.models.OfficeAssignmentModel;
 
 public class OfficeAssignmentBUS {
     private final List<OfficeAssignmentModel> officeAssignmentList = new ArrayList<>();

@@ -1,4 +1,4 @@
-package main.java.com.school.schoolmanagement.dal;
+package com.school.schoolmanagement.dal;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import main.java.com.school.schoolmanagement.models.*;
+import com.school.schoolmanagement.models.*;
 
 public class OfficeAssignmentDAL {
 

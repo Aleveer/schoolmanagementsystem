@@ -1,11 +1,11 @@
-package main.java.com.school.schoolmanagement.bus;
+package com.school.schoolmanagement.bus;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import main.java.com.school.schoolmanagement.dal.OnsiteCourseDAL;
-import main.java.com.school.schoolmanagement.models.OnsiteCourseModel;
+import com.school.schoolmanagement.dal.OnsiteCourseDAL;
+import com.school.schoolmanagement.models.OnsiteCourseModel;
 
 public class OnsiteCourseBUS {
     private final List<OnsiteCourseModel> onsiteCourseList = new ArrayList<>();

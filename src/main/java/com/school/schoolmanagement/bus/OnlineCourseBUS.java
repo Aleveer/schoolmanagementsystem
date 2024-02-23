@@ -1,11 +1,11 @@
-package main.java.com.school.schoolmanagement.bus;
+package com.school.schoolmanagement.bus;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import main.java.com.school.schoolmanagement.dal.OnlineCourseDAL;
-import main.java.com.school.schoolmanagement.models.OnlineCourseModel;
+import com.school.schoolmanagement.dal.OnlineCourseDAL;
+import com.school.schoolmanagement.models.OnlineCourseModel;
 
 public class OnlineCourseBUS {
     private final List<OnlineCourseModel> onlineCourseList = new ArrayList<>();
