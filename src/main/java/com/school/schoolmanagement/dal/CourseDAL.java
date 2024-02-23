@@ -76,6 +76,7 @@ public class CourseDAL {
     public int delete(int id) {
         String updateStatusSql = "delete from Course where CourseID = ?";
         Object[] args = { id };
+        System.out.println(updateStatusSql+" : "+ Arrays.toString(args));
         try {
             return DatabaseConnect.executeUpdate(updateStatusSql, args);
         } catch (SQLException e) {
@@ -86,13 +87,13 @@ public class CourseDAL {
 
     public List<CourseModel> search(String condition, String[] columnNames) {
         try {
-            StringBuilder queryBuilder = new StringBuilder("SELECT * FROM Course");
+            StringBuilder queryBuilder = new StringBuilder("SELECT * FROM Course where ");
 
             if (columnNames == null || columnNames.length == 0) {
                 queryBuilder.append("CONCAT(CourseID, Title, Credits, DepartmentID) LIKE ?");
-            } else if (columnNames.length == 1) { // specifical column
+            } else if (columnNames.length == 1) { // specific column
                 queryBuilder.append(columnNames[0]).append(" LIKE ?");
-            } else { // specifical columns
+            } else { // specific columns
                 queryBuilder.append("CONCAT(").append(String.join(", ", columnNames)).append(") LIKE ?");
             }
 
@@ -118,5 +119,102 @@ public class CourseDAL {
             return Collections.emptyList();
         }
     }
+
+    public List<CourseModel> searchConditions(String value, String departmentName, String status) {
+        try {
+            // If all parameters are empty or null >> select all
+            if ((value == null || value.isEmpty()) && (departmentName == null || departmentName.isEmpty()) && (status == null || status.isEmpty())) {
+                String baseQuery = "SELECT * FROM Course c";
+                try (PreparedStatement pst = DatabaseConnect.getPreparedStatement(baseQuery)) {
+                    try (ResultSet rs = pst.executeQuery()) {
+                        List<CourseModel> courseList = new ArrayList<>();
+                        while (rs.next()) {
+                            CourseModel courseModel = createCourseModel(rs);
+                            courseList.add(courseModel);
+                        }
+
+                        if (courseList.isEmpty()) {
+                            throw new SQLException("No course found!!");
+                        }
+
+                        return courseList;
+                    }
+                }
+            }
+
+            StringBuilder queryBuilder = new StringBuilder("SELECT * FROM Course c ");
+            queryBuilder.append("LEFT JOIN Department d ON d.DepartmentID = c.DepartmentID ");
+            if (status.equalsIgnoreCase("online")) {
+                queryBuilder.append("LEFT JOIN OnlineCourse o ON o.CourseID = c.CourseID ");
+            } else {
+                queryBuilder.append("LEFT JOIN OnsiteCourse o ON o.CourseID = c.CourseID ");
+            }
+            queryBuilder.append("WHERE ");
+
+            List<Object> parameters = new ArrayList<>();
+
+            if (value != null && !value.isEmpty()) {
+                // Check if status is "onsite" before adding the condition for onsite courses
+                if (status != null && status.equalsIgnoreCase("onsite")) {
+                    queryBuilder.append("(c.Title LIKE ? AND o.Location IS NOT NULL) ");
+                } else {
+                    queryBuilder.append("(c.Title LIKE ?) ");
+                }
+                parameters.add("%" + value + "%");
+            }
+
+            if (departmentName != null && !departmentName.isEmpty()) {
+                if (!parameters.isEmpty()) {
+                    queryBuilder.append("AND ");
+                }
+                queryBuilder.append("(d.Name = ?) ");
+                parameters.add(departmentName);
+
+                // Check if status is "onsite" before adding the condition for onsite courses
+                if (status != null && status.equalsIgnoreCase("onsite")) {
+                    queryBuilder.append("AND (o.Location IS NOT NULL) ");
+                }
+            }
+
+            if (status != null && status.equalsIgnoreCase("online")) {
+                if (!parameters.isEmpty()) {
+                    queryBuilder.append("AND ");
+                }
+                queryBuilder.append("(o.url IS NOT NULL) ");
+            }
+
+            if (status != null && status.equalsIgnoreCase("onsite")) {
+                if (!parameters.isEmpty()) {
+                    queryBuilder.append("AND ");
+                }
+                queryBuilder.append("(o.Location IS NOT NULL) ");
+            }
+
+            String query = queryBuilder.toString();
+            System.out.println(query);
+
+            try (PreparedStatement pst = DatabaseConnect.getPreparedStatement(query, parameters.toArray())) {
+                try (ResultSet rs = pst.executeQuery()) {
+                    List<CourseModel> courseList = new ArrayList<>();
+                    while (rs.next()) {
+                        CourseModel courseModel = createCourseModel(rs);
+                        courseList.add(courseModel);
+                    }
+
+                    if (courseList.isEmpty()) {
+                        throw new SQLException("No course found!!");
+                    }
+
+                    return courseList;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return Collections.emptyList();
+        }
+    }
+
+
+
 
 }

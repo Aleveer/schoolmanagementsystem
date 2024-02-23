@@ -9,8 +9,11 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 public class CourseManagement {
     private JPanel pnlMain;
@@ -44,6 +47,10 @@ public class CourseManagement {
     private JButton btnDel;
     private JButton btnUpdate;
     private JPanel panel_onSite;
+    private JButton btnRefresh;
+    private JComboBox cbDepartmentName;
+    private JComboBox cbStatus;
+    private JButton btnSearch;
 
     public CourseManagement() {
         pnlMain.setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -110,6 +117,23 @@ public class CourseManagement {
             cbDepartment.addItem(department.getName()+"");
         }
 
+        cbDepartmentName.addItem("");
+        for(DepartmentModel department : DepartmentBUS.getInstance().getAllModels()) {
+            cbDepartmentName.addItem(department.getName()+"");
+        }
+
+        cbStatus.addItem("");
+        cbStatus.addItem("Online");
+        cbStatus.addItem("Onsite");
+
+        btnRefresh.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                clearForm();
+                showListCourse();
+            }
+        });
+
         btnAdd.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -127,7 +151,7 @@ public class CourseManagement {
                     return;
                 }
 
-                int choice = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn xóa nhân viên này?", "Confirm Deletion",
+                int choice = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn xóa khóa học này?", "Confirm Deletion",
                         JOptionPane.YES_NO_OPTION);
                 if (choice == JOptionPane.YES_OPTION) {
                     int courseID = (int) tblList.getModel().getValueAt(selectedRow, 0);
@@ -143,12 +167,101 @@ public class CourseManagement {
             }
         });
 
+        txtSearch.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    String searchValue = txtSearch.getText().trim();
+                    String[] columnNames = {"CourseID" ,"Title", "Credits", "DepartmentID"};
+                    List<CourseModel> searchResults = CourseBUS.getInstance().searchModel(searchValue, columnNames);
+                    showSearchResult(searchResults);
+                }
+            }
+        });
+
+
+        btnUpdate.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int index = tblList.getSelectedRow();
+                if (index == -1) {
+                    JOptionPane.showMessageDialog(null, "Bạn chưa chọn dòng muốn sửa", "Thông báo",
+                            JOptionPane.INFORMATION_MESSAGE);
+                    return;
+                } else {
+                    int courseID = Integer.parseInt(txtCourseId.getText());
+                    String title = txtTitle.getText();
+                    int credit = Integer.parseInt(txtCredits.getText());
+                    String departmentName = (String) cbDepartment.getSelectedItem();
+                    int departmentID = 0;
+                    for(DepartmentModel department : DepartmentBUS.getInstance().getAllModels()) {
+                        if(departmentName.equals(department.getName())) {
+                            departmentID = department.getDepartmentID();
+                        }
+                    }
+                    Object status = tblList.getValueAt(index,4);
+                    if(status.toString().equals("Online")) {
+                        String url = txtUrl.getText();
+                        CourseModel updateModel = new CourseModel(courseID,title,credit,departmentID);
+                        OnlineCourseModel updateOnlineModel = new OnlineCourseModel(courseID,null,0,0,url);
+                        int resultModel = CourseBUS.getInstance().updateModel(updateModel);
+                        int resultOnlineModel = OnlineCourseBUS.getInstance().updateModel(updateOnlineModel);
+                        if(resultModel > 0 && resultOnlineModel > 0) {
+                            JOptionPane.showMessageDialog(null, "Cập nhập thành công", "Success",
+                                    JOptionPane.INFORMATION_MESSAGE);
+                        }
+                        showListCourse();
+                        txtUrl.setVisible(true);
+                        tblList.clearSelection();
+                    }else if(status.toString().equals("Onsite")) {
+                        String timeText = txtTime.getText();
+                        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+
+                        java.util.Date parsedDate;  // Change to java.util.Date
+                        try {
+                            parsedDate = timeFormat.parse(timeText);
+                        } catch (ParseException e1) {
+                            throw new RuntimeException(e1);
+                        }
+                        java.sql.Time time = new java.sql.Time(parsedDate.getTime());
+
+                        CourseModel updateModel = new CourseModel(courseID,title,credit,departmentID);
+                        OnsiteCourseModel updateOnsiteCourse = new OnsiteCourseModel(courseID,null,0,0,txtLocation.getText(),txtDays.getText(),time);
+
+                        int resultModel = CourseBUS.getInstance().updateModel(updateModel);
+                        int resultOnsiteModel = OnsiteCourseBUS.getInstance().updateModel(updateOnsiteCourse);
+
+                        if(resultModel > 0 && resultOnsiteModel > 0) {
+                            JOptionPane.showMessageDialog(null, "Cập nhập thành công", "Success",
+                                    JOptionPane.INFORMATION_MESSAGE);
+                        }
+
+                        showListCourse();
+                        panel_onSite.setVisible(true);
+                        tblList.clearSelection();
+                    }
+                }
+
+            }
+        });
+
+        btnSearch.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String value = txtSearch.getText();
+                String departmentName = cbDepartmentName.getSelectedItem()+"";
+                String status = cbStatus.getSelectedItem()+"";
+
+                List<CourseModel> models = CourseBUS.getInstance().searchConditions(value,departmentName,status);
+                showSearchResult(models);
+            }
+        });
 
         showListCourse();
     }
 
     public void showListCourse() {
         CourseBUS.getInstance().refresh();
+        OnlineCourseBUS.getInstance().refresh();
         DefaultTableModel model_table = (DefaultTableModel) tblList.getModel();
         model_table.setRowCount(0);
 
@@ -185,6 +298,16 @@ public class CourseManagement {
         txtLocation.setText("");
         txtDays.setText("");
         txtTime.setText("");
+        txtSearch.setText("");
+        cbDepartmentName.setSelectedItem("");
+        cbStatus.setSelectedItem("");
+        rdOnSite.setSelected(false);
+        txtLocation.setText("");
+        txtDays.setText("");
+        txtTime.setText("");
+        rdOnline.setSelected(false);
+        lbUrl.setVisible(false);
+        txtUrl.setVisible(false);
     }
 
     public void addCourse() {
@@ -198,31 +321,50 @@ public class CourseManagement {
         int credits = Integer.parseInt(txtCredits.getText() + "");
         String departmentName = cbDepartment.getSelectedItem() + "";
         int departmentID = 0;
-        for (DepartmentModel department : DepartmentBUS.getInstance().getAllModels()) {
-            if (departmentName.equals(department.getName())) {
+        for(DepartmentModel department : DepartmentBUS.getInstance().getAllModels()) {
+            if(departmentName.equals(department.getName())) {
                 departmentID = department.getDepartmentID();
-                CourseModel newCourse = new CourseModel(CourseID, title, credits, departmentID);
-                int result = CourseBUS.getInstance().addModel(newCourse);
-                if (result == 1) {
-                    JOptionPane.showMessageDialog(null, "Thêm thành công");
-                } else {
-                    JOptionPane.showMessageDialog(null, "Thêm thất bại");
-                }
             }
         }
 
         if (rdOnline.isSelected()) {
             String url = txtUrl.getText() + "";
+            CourseModel newCourse = new CourseModel(CourseID, title, credits, departmentID);
             OnlineCourseModel onlineCourse = new OnlineCourseModel(CourseID, title, credits, departmentID, url);
-            System.out.println("test cai coi: " + onlineCourse);
+            int resultModel = CourseBUS.getInstance().addModel(newCourse);
             int newOnlineCourse = OnlineCourseBUS.getInstance().addModel(onlineCourse);
-            if (newOnlineCourse == 1) {
-                System.out.println("Online course added");
+            if (resultModel == 1 && newOnlineCourse == 1) {
+                JOptionPane.showMessageDialog(null, "Thêm thành công");
+            } else {
+                JOptionPane.showMessageDialog(null, "Thêm thất bại");
             }
+//            String url = txtUrl.getText() + "";
+//            OnlineCourseModel onlineCourse = new OnlineCourseModel(CourseID, title, credits, departmentID, url);
+//            int newOnlineCourse = OnlineCourseBUS.getInstance().addModel(onlineCourse);
+//            if (newOnlineCourse == 1) {
+//                System.out.println("Online course added");
+//            }
         } else if (rdOnSite.isSelected()) {
             String timeText = txtTime.getText();
-            SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
 
+            String timeRegex = "([01]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]";
+
+            if (!timeText.matches(timeRegex)) {
+                JOptionPane.showMessageDialog(null, "Invalid time format");
+                return;
+            }
+
+            String[] timeParts = timeText.split(":");
+            int hours = Integer.parseInt(timeParts[0]);
+            int minutes = Integer.parseInt(timeParts[1]);
+            int seconds = Integer.parseInt(timeParts[2]);
+
+            if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59 || seconds < 0 || seconds > 59) {
+                JOptionPane.showMessageDialog(null, "Invalid time values. Please use valid hour, minute, and second values.");
+                return;
+            }
+
+            SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
             java.util.Date parsedDate;  // Change to java.util.Date
 
             try {
@@ -234,12 +376,17 @@ public class CourseManagement {
             // Convert java.util.Date to java.sql.Time
             java.sql.Time time = new java.sql.Time(parsedDate.getTime());
 
+            CourseModel newCourse = new CourseModel(CourseID, title, credits, departmentID);
             OnsiteCourseModel onsiteCourse = new OnsiteCourseModel(CourseID, txtTitle.getText(), Integer.parseInt(txtCredits.getText()), departmentID, txtLocation.getText(), txtDays.getText(), time);
+            int resultModel = CourseBUS.getInstance().addModel(newCourse);
             int newOnsiteCourse = OnsiteCourseBUS.getInstance().addModel(onsiteCourse);
-            if (newOnsiteCourse == 1) {
-                System.out.println("Onsite course added");
+            if (resultModel == 1 && newOnsiteCourse == 1) {
+                JOptionPane.showMessageDialog(null, "Thêm thành công");
+            } else {
+                JOptionPane.showMessageDialog(null, "Thêm thất bại");
             }
         }
+        tblList.clearSelection();
         clearForm();
         showListCourse();
     }
@@ -270,13 +417,14 @@ public class CourseManagement {
             cbDepartment.setSelectedItem(departmentName.toString());
 
             if(status.toString().equals("Online")) {
-                rdOnline.setSelected(true);
                 for(OnlineCourseModel online : OnlineCourseBUS.getInstance().getAllModels()) {
                     if(Integer.parseInt(courseID.toString()) == online.getId()) {
                         txtUrl.setText(online.getUrl());
                         break;
                     }
                 }
+                rdOnline.setSelected(true);
+                lbUrl.setVisible(true);
                 txtUrl.setVisible(true);
                 rdOnSite.setSelected(false);
                 panel_onSite.setVisible(false);
@@ -292,11 +440,34 @@ public class CourseManagement {
                 panel_onSite.setVisible(true);
                 rdOnline.setSelected(false);
                 txtUrl.setVisible(false);
+                lbUrl.setVisible(false);
             }
         }
     }
 
-        public static void main(String[] args) {
+    public void showSearchResult(List<CourseModel> search) {
+        DefaultTableModel model = (DefaultTableModel) tblList.getModel();
+        model.setRowCount(0);
+
+        for (CourseModel course : search) {
+            DepartmentModel department = DepartmentBUS.getInstance().getModelById(course.getDepartmentID());
+            OnlineCourseModel online = OnlineCourseBUS.getInstance().getModelById(course.getId());
+
+            boolean isOnline = (online != null && !online.getUrl().isEmpty());
+
+            model.addRow(new Object[]{
+                    course.getId(),
+                    course.getTitle(),
+                    course.getCredit(),
+                    (department != null) ? department.getName() : null,
+                    isOnline ? "Online" : "Onsite"
+            });
+        }
+    }
+
+
+
+    public static void main(String[] args) {
         new CourseManagement();
     }
 }

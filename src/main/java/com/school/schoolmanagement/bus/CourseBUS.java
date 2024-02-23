@@ -1,11 +1,13 @@
 package com.school.schoolmanagement.bus;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import com.school.schoolmanagement.dal.CourseDAL;
 import com.school.schoolmanagement.models.CourseModel;
+import com.school.schoolmanagement.models.DepartmentModel;
 
 import javax.swing.*;
 
@@ -47,7 +49,7 @@ public class CourseBUS {
         if (CourseModel.getTitle().isEmpty() || CourseModel.getTitle() == null
                 || CourseModel.getCredit() <= 0
                 || CourseModel.getDepartmentID() <= 0) {
-            throw new IllegalArgumentException("error infomation, try again!!!");
+            throw new IllegalArgumentException("error information, try again!!!");
         }
 
         for (CourseModel course : CourseBUS.getInstance().getAllModels()) {
@@ -59,7 +61,6 @@ public class CourseBUS {
                 break;
             }
         }
-        System.out.println("Test: " + CourseModel);
         int result = CourseDAL.getInstance().insert(CourseModel);
         if (result > 0) {
             courseList.add(CourseModel);
@@ -92,22 +93,34 @@ public class CourseBUS {
     }
 
     public List<CourseModel> searchModel(String value, String[] columns) {
-        List<CourseModel> items = getAllModels();
+        List<CourseModel> items = CourseDAL.getInstance().search(value,columns);
         List<CourseModel> results = new ArrayList<>();
+
+//        for(DepartmentModel department : DepartmentBUS.getInstance().getAllModels()) {
+//            if(value.equalsIgnoreCase(department.getName()) || department.getName().toLowerCase().contains(value.toLowerCase())) {
+//                value = String.valueOf(department.getDepartmentID());
+//            }
+//        }
+//        System.out.println("test value: "+value);
         for (CourseModel item : items) {
             if (checkFilter(item, value, columns)) {
                 results.add(item);
             }
         }
         return results;
+    }
 
+    public List<CourseModel> searchConditions(String value,String departmentName, String status) {
+        List<CourseModel> items = CourseDAL.getInstance().searchConditions(value,departmentName,status);
+
+        return new ArrayList<>(items);
     }
 
     private boolean checkFilter(CourseModel courseModel, String value, String[] columns) {
         for (String column : columns) {
-            switch (column.toLowerCase()) {
+            switch (column) {
                 case "CourseID":
-                    if (Integer.parseInt(value) == courseModel.getId()) {
+                    if (String.valueOf(courseModel.getId()).contains(value)) {
                         return true;
                     }
                     break;
@@ -132,5 +145,6 @@ public class CourseBUS {
         }
         return false;
     }
+
 
 }
