@@ -169,12 +169,12 @@ public class CourseManagement {
             public void actionPerformed(ActionEvent e) {
                 int selectedRow = tblList.getSelectedRow();
                 if (selectedRow == -1) {
-                    JOptionPane.showMessageDialog(null, "Bạn chưa chọn dòng muốn xóa", "Thông báo",
+                    JOptionPane.showMessageDialog(null, "Please choose a course for deletion", "Attention",
                             JOptionPane.INFORMATION_MESSAGE);
                     return;
                 }
 
-                int choice = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn xóa khóa học này?", "Confirm Deletion",
+                int choice = JOptionPane.showConfirmDialog(null, "Do you want to delete this course?", "Confirm Deletion",
                         JOptionPane.YES_NO_OPTION);
                 if (choice == JOptionPane.YES_OPTION) {
                     int courseID = (int) tblList.getModel().getValueAt(selectedRow, 0);
@@ -208,7 +208,7 @@ public class CourseManagement {
             public void actionPerformed(ActionEvent e) {
                 int index = tblList.getSelectedRow();
                 if (index == -1) {
-                    JOptionPane.showMessageDialog(null, "Bạn chưa chọn dòng muốn sửa", "Thông báo",
+                    JOptionPane.showMessageDialog(null, "Please choose a course for update", "Attention",
                             JOptionPane.INFORMATION_MESSAGE);
                     return;
                 } else {
@@ -230,7 +230,7 @@ public class CourseManagement {
                         int resultModel = CourseBUS.getInstance().updateModel(updateModel);
                         int resultOnlineModel = OnlineCourseBUS.getInstance().updateModel(updateOnlineModel);
                         if(resultModel > 0 && resultOnlineModel > 0) {
-                            JOptionPane.showMessageDialog(null, "Cập nhập thành công", "Success",
+                            JOptionPane.showMessageDialog(null, "Update successfully", "Success",
                                     JOptionPane.INFORMATION_MESSAGE);
                         }
                         showListCourse();
@@ -255,7 +255,7 @@ public class CourseManagement {
                         int resultOnsiteModel = OnsiteCourseBUS.getInstance().updateModel(updateOnsiteCourse);
 
                         if(resultModel > 0 && resultOnsiteModel > 0) {
-                            JOptionPane.showMessageDialog(null, "Cập nhập thành công", "Success",
+                            JOptionPane.showMessageDialog(null, "Update successfully", "Success",
                                     JOptionPane.INFORMATION_MESSAGE);
                         }
 
@@ -341,7 +341,7 @@ public class CourseManagement {
 
     public void addCourse() {
         if (!rdOnline.isSelected() && !rdOnSite.isSelected()) {
-            JOptionPane.showMessageDialog(null, "Chọn hình thức khóa học(Online,onsite)");
+            JOptionPane.showMessageDialog(null, "Please choose course type (Online, onsite)");
             return;
         }
 
@@ -363,9 +363,9 @@ public class CourseManagement {
             int resultModel = CourseBUS.getInstance().addModel(newCourse);
             int newOnlineCourse = OnlineCourseBUS.getInstance().addModel(onlineCourse);
             if (resultModel == 1 && newOnlineCourse == 1) {
-                JOptionPane.showMessageDialog(null, "Thêm thành công");
+                JOptionPane.showMessageDialog(null, "Add successfully");
             } else {
-                JOptionPane.showMessageDialog(null, "Thêm thất bại");
+                JOptionPane.showMessageDialog(null, "Add failed");
             }
         } else if (rdOnSite.isSelected()) {
             String timeText = txtTime.getText();
@@ -404,9 +404,9 @@ public class CourseManagement {
             int resultModel = CourseBUS.getInstance().addModel(newCourse);
             int newOnsiteCourse = OnsiteCourseBUS.getInstance().addModel(onsiteCourse);
             if (resultModel == 1 && newOnsiteCourse == 1) {
-                JOptionPane.showMessageDialog(null, "Thêm thành công");
+                JOptionPane.showMessageDialog(null, "Add successfully");
             } else {
-                JOptionPane.showMessageDialog(null, "Thêm thất bại");
+                JOptionPane.showMessageDialog(null, "Add failed");
             }
         }
         tblList.clearSelection();
