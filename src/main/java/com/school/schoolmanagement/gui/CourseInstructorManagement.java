@@ -1,254 +1,171 @@
 package com.school.schoolmanagement.gui;
 
-import com.school.schoolmanagement.bus.*;
-import com.school.schoolmanagement.models.*;
+import java.awt.*;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Dictionary;
 
-public class CourseInstructorManagement {
-    private JPanel pnlMain;
-    private JPanel pnlPerson;
-    private JPanel pnlOnlineCourse;
-    private JPanel pnlOnSiteCourse;
-    private JPanel pnlList;
-    private JTextField txtPersonId;
-    private JTextField txtLastName;
-    private JTextField txtFirstName;
-    private JLabel lbPersonId;
-    private JLabel lbLastName;
-    private JLabel lbFirstName;
-    private JComboBox cbCouseOnlineId;
-    private JTextField txtUrl;
-    private JLabel lbCourseOnlineId;
-    private JLabel lbUrl;
-    private JComboBox cbCourseOnsiteId;
-    private JTextField txtLocation;
-    private JTextField txtDays;
-    private JTextField txtTime;
-    private JLabel lbCourseOnsiteId;
-    private JLabel lbLocation;
-    private JLabel lbDays;
-    private JLabel lbTime;
-    private JTable tbList;
-    private JButton btnAssign;
-    private JButton btnNotAssign;
-    private JComboBox cbPersonId;
+public class CourseInstructorManagement extends JPanel {
 
     public CourseInstructorManagement() {
-        pnlMain.setBorder(new EmptyBorder(10, 10, 10, 10));
-        pnlOnlineCourse.setBorder(BorderFactory.createTitledBorder(
-                BorderFactory.createEtchedBorder(), "Online Course"));
-        pnlOnSiteCourse.setBorder(BorderFactory.createTitledBorder(
-                BorderFactory.createEtchedBorder(), "On Site Course"));
-
-        JFrame frame = new JFrame("Course Instructor Management");
-        frame.setContentPane(pnlMain);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setVisible(true);
-        frame.setLocationRelativeTo(null);
-
-//        Set Column for jTable
-        tbList.setModel(new DefaultTableModel(
-                                 new Object[][] {
-                                 },
-                                 new String[] {"CourseID",
-                                         "Title",
-                                         "PersonID",
-                                         "LastName",
-                                         "FirstName"
-                                 }) {
-                             @Override
-                             public boolean isCellEditable(int row, int column) {
-                                 return column == getColumnCount();
-                             }
-                         }
-        );
-
-        txtFirstName.setEditable(false);
-        txtLastName.setEditable(false);
-        txtUrl.setEditable(false);
-        txtDays.setEditable(false);
-        txtLocation.setEditable(false);
-        txtTime.setEditable(false);
-
-        showListCourseInstructor();
-        loadDataComboBox();
-
-        cbPersonId.setSelectedIndex(-1);
-        cbCourseOnsiteId.setSelectedIndex(-1);
-        cbCouseOnlineId.setSelectedIndex(-1);
-
-//        combo box person ID action listener
-        cbPersonId.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (cbPersonId.getSelectedIndex() != -1) {
-                    int selectedItem = (int) cbPersonId.getSelectedItem();
-
-                    for (PersonModel person : PersonBUS.getInstance().getAllModels()) {
-                        if (person.getPersonID() == selectedItem) {
-                            txtFirstName.setText(person.getFirstName());
-                            txtLastName.setText(person.getLastName());
-                        }
-                    }
-                }
-            }
-        });
-
-        //        combo box CourseOnlineId action listener
-        cbCouseOnlineId.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (cbCouseOnlineId.getSelectedIndex() != -1) {
-                    int selectedItem = (int) cbCouseOnlineId.getSelectedItem();
-
-                    for (OnlineCourseModel course : OnlineCourseBUS.getInstance().getAllModels()) {
-                        if (course.getId() == selectedItem) {
-                            txtUrl.setText(course.getUrl());
-                        }
-                    }
-                }
-            }
-        });
-
-        //        combo box CourseOnsiteId action listener
-        cbCourseOnsiteId.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (cbCourseOnsiteId.getSelectedIndex() != -1) {
-                    int selectedItem = (int) cbCourseOnsiteId.getSelectedItem();
-
-                    for (OnsiteCourseModel course : OnsiteCourseBUS.getInstance().getAllModels()) {
-                        if (course.getId() == selectedItem) {
-                            txtLocation.setText(course.getLocation());
-                            txtDays.setText(course.getDays());
-                            txtTime.setText(course.getTime().toString());
-                        }
-                    }
-                }
-            }
-        });
-
-//        List Selection Listener for jTable
-        tbList.getSelectionModel().addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting()) {
-                int selectedRow = tbList.getSelectedRow();
-//                Check if row is selected
-                if (selectedRow != -1) {
-//                    Get courseId and personId from jTable
-                    int courseId = (int)tbList.getValueAt(selectedRow, 0);
-                    int personId = (int)tbList.getValueAt(selectedRow, 2);
-
-//                    Display person detail into text field
-                    for (PersonModel person : PersonBUS.getInstance().getAllModels()) {
-                        if (person.getPersonID() == personId) {
-                            txtFirstName.setText(person.getFirstName());
-                            txtLastName.setText(person.getLastName());
-//                            Set combo box selected index correspond to selected record
-                            for (int i = 0; i < cbPersonId.getItemCount(); i++) {
-                                if (Integer.parseInt(cbPersonId.getItemAt(i).toString()) == person.getPersonID()) {
-                                    cbPersonId.setSelectedIndex(i);
-                                    break;
-                                }
-                            }
-                        }
-                    }
-
-//                    Display online course detail into text field
-                    for (OnlineCourseModel course : OnlineCourseBUS.getInstance().getAllModels()) {
-                        if (course.getId() == courseId) {
-                            txtUrl.setText(course.getUrl());
-                            cbCourseOnsiteId.setSelectedIndex(-1);
-                            txtLocation.setText("");
-                            txtDays.setText("");
-                            txtTime.setText("");
-//                            Set combo box selected index correspond to selected record
-                            for (int i = 0; i < cbCouseOnlineId.getItemCount(); i++) {
-                                if (Integer.parseInt(cbCouseOnlineId.getItemAt(i).toString()) == course.getId()) {
-                                    cbCouseOnlineId.setSelectedIndex(i);
-                                    break;
-                                }
-                            }
-                            return;
-                        }
-                    }
-//                    Display onsite course detail into text field
-                    for (OnsiteCourseModel course : OnsiteCourseBUS.getInstance().getAllModels()) {
-                        if (course.getId() == courseId) {
-                            txtLocation.setText(course.getLocation());
-                            txtDays.setText(course.getDays());
-                            txtTime.setText(course.getTime().toString());
-                            txtUrl.setText("");
-                            cbCouseOnlineId.setSelectedIndex(-1);
-//                            Set combo box selected index correspond to selected record
-                            for (int i = 0; i < cbCourseOnsiteId.getItemCount(); i++) {
-                                if (Integer.parseInt(cbCourseOnsiteId.getItemAt(i).toString()) == course.getId()) {
-                                    cbCourseOnsiteId.setSelectedIndex(i);
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        });
+        initComponents();
     }
 
-    private void showListCourseInstructor() {
-        CourseInstructorBUS.getInstance().refresh();
-        DefaultTableModel model_table = (DefaultTableModel) tbList.getModel();
-        model_table.setRowCount(0);
+    private void initComponents() {
 
-        DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
-        renderer.setHorizontalAlignment(SwingConstants.CENTER);
+        panelHeader = new JPanel();
+        panelPerson = new JPanel();
+        labelPersonID = new JLabel();
+        comboBoxPersonID = new JComboBox<>();
+        labelLastName = new JLabel();
+        textFieldLastName = new JTextField();
+        labelFirstName = new JLabel();
+        textFieldFirstName = new JTextField();
+        panelOnlineCourse = new JPanel();
+        labelCourseID = new JLabel();
+        comboBoxCourseID = new JComboBox<>();
+        labelURL = new JLabel();
+        textFieldURL = new JTextField();
+        panelOnsiteCourse = new JPanel();
+        labelOnsiteCourseID = new JLabel();
+        comboBoxOnsiteCourseID = new JComboBox<>();
+        labelLocation = new JLabel();
+        textFieldLocation = new JTextField();
+        labelDay = new JLabel();
+        textFieldDay = new JTextField();
+        labelTime = new JLabel();
+        textFieldTime = new JTextField();
+        panelButton = new JPanel();
+        buttonAssign = new JButton();
+        buttonNoAssign = new JButton();
+        scrollPane = new JScrollPane();
+        table = new JTable();
 
-        for (CourseInstructorModel ci : CourseInstructorBUS.getInstance().getAllModels()) {
-//            Find first name and last name
-            for (PersonModel person : PersonBUS.getInstance().getAllModels()) {
-                if (person.getPersonID() == ci.getPersonID()) {
-//                    Find title from course id
-                    for (CourseModel course : CourseBUS.getInstance().getAllModels()) {
-                        if (course.getId() == ci.getCourseID()) {
-                            model_table.addRow(new Object[]{
-                                    ci.getCourseID(),
-                                    course.getTitle(),
-                                    ci.getPersonID(),
-                                    person.getFirstName(),
-                                    person.getLastName()
-                            });
-                        }
-                    }
-                }
+        setLayout(new BorderLayout());
+
+        panelHeader.setLayout(new GridLayout(4, 0, 0, 10));
+
+        panelPerson.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        panelPerson.setLayout(new FlowLayout(FlowLayout.LEFT));
+
+        labelPersonID.setText("Person ID");
+        panelPerson.add(labelPersonID);
+
+        comboBoxPersonID.setModel(new DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        panelPerson.add(comboBoxPersonID);
+
+        labelLastName.setText("Last Name");
+        panelPerson.add(labelLastName);
+
+        textFieldLastName.setPreferredSize(new Dimension(180, 22));
+        panelPerson.add(textFieldLastName);
+
+        labelFirstName.setText("First Name");
+        panelPerson.add(labelFirstName);
+
+        textFieldFirstName.setPreferredSize(new Dimension(180, 22));
+        panelPerson.add(textFieldFirstName);
+
+        panelHeader.add(panelPerson);
+
+        panelOnlineCourse.setBorder(BorderFactory.createTitledBorder("Online Course"));
+        panelOnlineCourse.setLayout(new FlowLayout(FlowLayout.LEFT));
+
+        labelCourseID.setText("Course ID");
+        panelOnlineCourse.add(labelCourseID);
+
+        comboBoxCourseID.setModel(new DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        panelOnlineCourse.add(comboBoxCourseID);
+
+        labelURL.setText("URL");
+        panelOnlineCourse.add(labelURL);
+
+        textFieldURL.setPreferredSize(new Dimension(200, 22));
+        panelOnlineCourse.add(textFieldURL);
+
+        panelHeader.add(panelOnlineCourse);
+
+        panelOnsiteCourse.setBorder(BorderFactory.createTitledBorder("Onsite Course"));
+        panelOnsiteCourse.setLayout(new FlowLayout(FlowLayout.LEFT));
+
+        labelOnsiteCourseID.setText("Course ID");
+        panelOnsiteCourse.add(labelOnsiteCourseID);
+
+        comboBoxOnsiteCourseID.setModel(new DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        panelOnsiteCourse.add(comboBoxOnsiteCourseID);
+
+        labelLocation.setText("Location");
+        panelOnsiteCourse.add(labelLocation);
+
+        textFieldLocation.setPreferredSize(new Dimension(140, 22));
+        panelOnsiteCourse.add(textFieldLocation);
+
+        labelDay.setText("Days");
+        panelOnsiteCourse.add(labelDay);
+
+        textFieldDay.setPreferredSize(new Dimension(140, 22));
+        panelOnsiteCourse.add(textFieldDay);
+
+        labelTime.setText("Time");
+        panelOnsiteCourse.add(labelTime);
+
+        textFieldTime.setPreferredSize(new Dimension(140, 22));
+        panelOnsiteCourse.add(textFieldTime);
+
+        panelHeader.add(panelOnsiteCourse);
+
+        buttonAssign.setText("Assign");
+        panelButton.add(buttonAssign);
+
+        buttonNoAssign.setText("No Assign");
+        buttonNoAssign.setToolTipText("");
+        panelButton.add(buttonNoAssign);
+
+        panelHeader.add(panelButton);
+
+        add(panelHeader, BorderLayout.PAGE_START);
+
+        table.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
             }
-        }
+        ));
+        scrollPane.setViewportView(table);
+
+        add(scrollPane, BorderLayout.CENTER);
     }
 
-    private void loadDataComboBox() {
-//        Data for combo box person
-        for (PersonModel person : PersonBUS.getInstance().getAllModels()) {
-            cbPersonId.addItem(person.getPersonID());
-        }
 
-//        Data for combo box online course
-        for (CourseModel courseOnline : OnlineCourseBUS.getInstance().getAllModels()) {
-            cbCouseOnlineId.addItem(courseOnline.getId());
-        }
-
-//        Data for combo box onsite course
-        for (CourseModel courseOnSite : OnsiteCourseBUS.getInstance().getAllModels()) {
-            cbCourseOnsiteId.addItem(courseOnSite.getId());
-        }
-    }
-
-    public static void main(String[] args) {
-        new CourseInstructorManagement();
-    }
+    private JButton buttonAssign;
+    private JButton buttonNoAssign;
+    private JComboBox<String> comboBoxCourseID;
+    private JComboBox<String> comboBoxOnsiteCourseID;
+    private JComboBox<String> comboBoxPersonID;
+    private JPanel panelHeader;
+    private JPanel panelPerson;
+    private JPanel panelOnlineCourse;
+    private JPanel panelOnsiteCourse;
+    private JLabel labelCourseID;
+    private JLabel labelDay;
+    private JLabel labelFirstName;
+    private JLabel labelLastName;
+    private JLabel labelLocation;
+    private JLabel labelOnsiteCourseID;
+    private JLabel labelPersonID;
+    private JLabel labelTime;
+    private JLabel labelURL;
+    private JPanel panelButton;
+    private JScrollPane scrollPane;
+    private JTable table;
+    private JTextField textFieldDay;
+    private JTextField textFieldFirstName;
+    private JTextField textFieldLastName;
+    private JTextField textFieldLocation;
+    private JTextField textFieldTime;
+    private JTextField textFieldURL;
 }
