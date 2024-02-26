@@ -135,7 +135,10 @@ public class CourseManagement extends JPanel {
 
         panelInfor.add(labelDepartment, gridBagConstraints);
 
-        departmentComboBox.setModel(new DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        departmentComboBox.addItem("");
+        for(DepartmentModel department : DepartmentBUS.getInstance().getAllModels()) {
+            departmentComboBox.addItem(department.getName()+"");
+        }
         departmentComboBox.setPreferredSize(new Dimension(220, 22));
         
         gridBagConstraints = new GridBagConstraints();
