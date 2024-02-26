@@ -1,15 +1,11 @@
 package com.school.schoolmanagement.bus;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import com.school.schoolmanagement.dal.CourseDAL;
 import com.school.schoolmanagement.models.CourseModel;
-import com.school.schoolmanagement.models.DepartmentModel;
-
-import javax.swing.*;
 
 public class CourseBUS {
     private final List<CourseModel> courseList = new ArrayList<>();
@@ -52,15 +48,6 @@ public class CourseBUS {
             throw new IllegalArgumentException("error information, try again!!!");
         }
 
-        for (CourseModel course : CourseBUS.getInstance().getAllModels()) {
-            if (CourseModel.getId() == course.getId()) {
-                JOptionPane.showMessageDialog(null, "Course ID has existed");
-                break;
-            } else if (CourseModel.getTitle().equals(course.getTitle())) {
-                JOptionPane.showMessageDialog(null, "Title has existed");
-                break;
-            }
-        }
         int result = CourseDAL.getInstance().insert(CourseModel);
         if (result > 0) {
             courseList.add(CourseModel);
