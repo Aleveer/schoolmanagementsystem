@@ -4,9 +4,11 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.sql.Time;
 
 import javax.swing.*;
 import javax.swing.table.*;
@@ -17,9 +19,12 @@ import com.formdev.flatlaf.json.ParseException;
 import com.school.schoolmanagement.bus.CourseBUS;
 import com.school.schoolmanagement.bus.DepartmentBUS;
 import com.school.schoolmanagement.bus.OnlineCourseBUS;
+import com.school.schoolmanagement.bus.OnsiteCourseBUS;
 import com.school.schoolmanagement.models.CourseModel;
 import com.school.schoolmanagement.models.DepartmentModel;
 import com.school.schoolmanagement.models.OnlineCourseModel;
+import com.school.schoolmanagement.models.OnsiteCourseModel;
+
 import org.netbeans.lib.awtextra.*;
 
 public class CourseManagement extends JPanel {
@@ -62,6 +67,16 @@ public class CourseManagement extends JPanel {
         buttonSearch = new JButton();
         scrollPane = new JScrollPane();
         table = new JTable();
+        panel_online = new JPanel();
+        panel_onSite = new JPanel();
+        labelURL = new JLabel();
+        txtURL = new JTextField();
+        labelLocation = new JLabel();
+        labelDays = new JLabel();
+        labelTime = new JLabel();
+        txtLocation = new JTextField();
+        txtDays = new JTextField();
+        txtTime = new JTextField();
 
         setLayout(new BorderLayout());
 
@@ -154,15 +169,35 @@ public class CourseManagement extends JPanel {
 
         panelHeader.add(panelInfor, BorderLayout.WEST);
 
-        panelCourse.setLayout(new AbsoluteLayout());
+        panelCourse.setLayout(new BorderLayout());
 
         radioOnline.setText("Online Course");
 
-        panelCourse.add(radioOnline, new AbsoluteConstraints(20, 20, -1, -1));
+        panelCourse.add(radioOnline, BorderLayout.EAST);
 
         radioOnsite.setText("Onsite Course");
 
-        panelCourse.add(radioOnsite, new AbsoluteConstraints(140, 20, -1, -1));
+        panelCourse.add(radioOnsite, BorderLayout.WEST);
+
+        labelURL.setText("URL");
+        panel_online.add(labelURL);
+        txtURL.setPreferredSize(new Dimension(160, 35));
+        panel_online.add(txtURL);
+
+        labelLocation.setText("Location");
+        panel_onSite.add(labelLocation);
+        txtLocation.setPreferredSize(new Dimension(110, 20));
+        panel_onSite.add(txtLocation);
+        labelDays.setText("Days");
+        panel_onSite.add(labelDays);
+        txtDays.setPreferredSize(new Dimension(110, 20));
+        panel_onSite.add(txtDays);
+        labelTime.setText("Time");
+        panel_onSite.add(labelTime);
+        txtTime.setPreferredSize(new Dimension(110, 20));
+        panel_onSite.add(txtTime);
+
+        panelCourse.add(panel_online, BorderLayout.CENTER);
 
         panelHeader.add(panelCourse, BorderLayout.CENTER);
 
@@ -213,7 +248,7 @@ public class CourseManagement extends JPanel {
         });
 
         panel.add(panelSearch, BorderLayout.PAGE_START);
-        String[] columnNames = { "CourseID", "Title", "Credits", "DepartmentID", "Status"};
+        String[] columnNames = { "CourseID", "Title", "Credits", "DepartmentID", "Status" };
         Object[][] data = new Object[courseList.size()][4];
         for (int i = 0; i < courseList.size(); i++) {
             CourseModel course = courseList.get(i);
@@ -221,7 +256,7 @@ public class CourseManagement extends JPanel {
             data[i][1] = course.getTitle();
             data[i][2] = course.getCredit();
             data[i][3] = course.getDepartmentID();
-            //TODO: Take online or onsite?
+            // TODO: Take online or onsite?
         }
 
         DefaultTableModel model = new DefaultTableModel(data, columnNames);
@@ -367,48 +402,46 @@ public class CourseManagement extends JPanel {
                     }
                     Object status = table.getValueAt(index, 4);
                     if (status.toString().equals("Online")) {
-                        // String url = txtUrl.getText();
+                        String url = txtURL.getText();
                         CourseModel updateModel = new CourseModel(courseID, title, credit, departmentID);
-                        // OnlineCourseModel updateOnlineModel = new
-                        // OnlineCourseModel(courseID,null,0,0,url);
-                        // int resultModel = CourseBUS.getInstance().updateModel(updateModel);
-                        // int resultOnlineModel =
-                        // OnlineCourseBUS.getInstance().updateModel(updateOnlineModel);
-                        // if(resultModel > 0 && resultOnlineModel > 0) {
-                        // JOptionPane.showMessageDialog(null, "Update successfully", "Success",
-                        // JOptionPane.INFORMATION_MESSAGE);
-                        // }
+                        OnlineCourseModel updateOnlineModel = new OnlineCourseModel(courseID, null, 0, 0, url);
+                        int resultModel = CourseBUS.getInstance().updateModel(updateModel);
+                        int resultOnlineModel = OnlineCourseBUS.getInstance().updateModel(updateOnlineModel);
+                        if (resultModel > 0 && resultOnlineModel > 0) {
+                            JOptionPane.showMessageDialog(null, "Update successfully", "Success",
+                                    JOptionPane.INFORMATION_MESSAGE);
+                        }
                         showListCourse();
-                        // txtUrl.setVisible(true);
+                        txtURL.setVisible(true);
                         table.clearSelection();
                     } else if (status.toString().equals("Onsite")) {
-                        // String timeText = txtTime.getText();
+                        String timeText = txtTime.getText();
                         SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
 
-                        java.util.Date parsedDate; // Change to java.util.Date
+                        Date parsedDate; // Change to java.util.Date
                         try {
-                            // parsedDate = timeFormat.parse(timeText);
-                        } catch (ParseException e1) {
-                            throw new RuntimeException(e1);
+                            parsedDate = timeFormat.parse(timeText);
+                        } catch (java.text.ParseException e1) {
+                            // TODO Auto-generated catch block
+                            e1.printStackTrace();
                         }
-                        // java.sql.Time time = new java.sql.Time(parsedDate.getTime());
 
-                        // CourseModel updateModel = new
-                        // CourseModel(courseID,title,credit,departmentID);
-                        // OnsiteCourseModel updateOnsiteCourse = new
-                        // OnsiteCourseModel(courseID,null,0,0,txtLocation.getText(),txtDays.getText(),time);
-                        //
-                        // int resultModel = CourseBUS.getInstance().updateModel(updateModel);
-                        // int resultOnsiteModel =
-                        // OnsiteCourseBUS.getInstance().updateModel(updateOnsiteCourse);
-                        //
-                        // if(resultModel > 0 && resultOnsiteModel > 0) {
-                        // JOptionPane.showMessageDialog(null, "Update successfully", "Success",
-                        // JOptionPane.INFORMATION_MESSAGE);
-                        // }
+                        Time time = new Time(1); // Lỗi
+
+                        CourseModel updateModel = new CourseModel(courseID, title, credit, departmentID);
+                        OnsiteCourseModel updateOnsiteCourse = new OnsiteCourseModel(courseID, null, 0, 0,
+                                txtLocation.getText(), txtDays.getText(), time);
+
+                        int resultModel = CourseBUS.getInstance().updateModel(updateModel);
+                        int resultOnsiteModel = OnsiteCourseBUS.getInstance().updateModel(updateOnsiteCourse);
+
+                        if (resultModel > 0 && resultOnsiteModel > 0) {
+                            JOptionPane.showMessageDialog(null, "Update successfully", "Success",
+                                    JOptionPane.INFORMATION_MESSAGE);
+                        }
 
                         showListCourse();
-                        // panel_onSite.setVisible(true);
+                        panel_onSite.setVisible(true);
                         table.clearSelection();
                     }
                 }
@@ -518,7 +551,6 @@ public class CourseManagement extends JPanel {
     // }
 
     public void addCourse() {
-        try {
             int courseID = Integer.parseInt(textFieldId.getText());
             for (int i = 0; i < courseList.size(); i++) {
                 if (courseID == courseList.get(i).getId()) {
@@ -537,69 +569,64 @@ public class CourseManagement extends JPanel {
             }
             CourseBUS.getInstance().addModel(new CourseModel(courseID, title, credits, lastNumber));
             CourseBUS.getInstance().refresh();
-        } catch (NumberFormatException e) {
-            e.printStackTrace();
-        }
+
 
         if (radioOnline.isSelected()) {
-            // String url = txtUrl.getText() + "";
-            // CourseModel newCourse = new CourseModel(CourseID, title, credits,
-            // departmentID);
-            // OnlineCourseModel onlineCourse = new OnlineCourseModel(CourseID, title,
-            // credits, departmentID, url);
-            // int resultModel = CourseBUS.getInstance().addModel(newCourse);
-            // int newOnlineCourse = OnlineCourseBUS.getInstance().addModel(onlineCourse);
-            // if (resultModel == 1 && newOnlineCourse == 1) {
-            // JOptionPane.showMessageDialog(null, "Add successfully");
-            // } else {
-            // JOptionPane.showMessageDialog(null, "Add failed");
-            // }
+            String url = txtURL.getText() + "";
+            CourseModel newCourse = new CourseModel(courseID, title, credits,lastNumber);
+            OnlineCourseModel onlineCourse = new OnlineCourseModel(courseID, title, credits, lastNumber, url);
+            int resultModel = CourseBUS.getInstance().addModel(newCourse);
+            int newOnlineCourse = OnlineCourseBUS.getInstance().addModel(onlineCourse);
+            if (resultModel == 1 && newOnlineCourse == 1) {
+            JOptionPane.showMessageDialog(null, "Add successfully");
+            } else {
+            JOptionPane.showMessageDialog(null, "Add failed");
+            }
         } else if (radioOnsite.isSelected()) {
-            // String timeText = txtTime.getText();
-            //
-            // String timeRegex = "([01]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]";
-            //
-            // if (!timeText.matches(timeRegex)) {
-            // JOptionPane.showMessageDialog(null, "Invalid time format");
-            // return;
-            // }
-            //
-            // String[] timeParts = timeText.split(":");
-            // int hours = Integer.parseInt(timeParts[0]);
-            // int minutes = Integer.parseInt(timeParts[1]);
-            // int seconds = Integer.parseInt(timeParts[2]);
-            //
-            // if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59 || seconds < 0 ||
-            // seconds > 59) {
-            // JOptionPane.showMessageDialog(null, "Invalid time values. Please use valid
-            // hour, minute, and second values.");
-            // return;
-            // }
-            //
-            // SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-            // java.util.Date parsedDate; // Change to java.util.Date
-            //
+            String timeText = txtTime.getText();
+            
+            String timeRegex = "([01]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]";
+            
+            if (!timeText.matches(timeRegex)) {
+            JOptionPane.showMessageDialog(null, "Invalid time format");
+            return;
+            }
+            
+            String[] timeParts = timeText.split(":");
+            int hours = Integer.parseInt(timeParts[0]);
+            int minutes = Integer.parseInt(timeParts[1]);
+            int seconds = Integer.parseInt(timeParts[2]);
+            
+            if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59 || seconds < 0 ||
+            seconds > 59) {
+            JOptionPane.showMessageDialog(null, "Invalid time values. Please use valid hour, minute, and second values.");
+            return;
+            }
+            
+            SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+            java.util.Date parsedDate; // Change to java.util.Date
+            
             // try {
             // parsedDate = timeFormat.parse(timeText);
             // } catch (ParseException e) {
             // throw new RuntimeException(e);
             // }
-            //
-            // // Convert java.util.Date to java.sql.Time
-            // java.sql.Time time = new java.sql.Time(parsedDate.getTime());
-            //
-            // CourseModel newCourse = new CourseModel(CourseID, title, credits,
-            // departmentID);
-            // OnsiteCourseModel onsiteCourse = new OnsiteCourseModel(CourseID,
-            // textFieldTitle.getText(), Integer.parseInt(textFieldCredit.getText()),
-            // departmentID, txtLocation.getText(), txtDays.getText(), time);
-            // int resultModel = CourseBUS.getInstance().addModel(newCourse);
-            // int newOnsiteCourse = OnsiteCourseBUS.getInstance().addModel(onsiteCourse);
-            // if (resultModel == 1 && newOnsiteCourse == 1) {
-            // JOptionPane.showMessageDialog(null, "Add successfully");
-            // } else {
-            // JOptionPane.showMessageDialog(null, "Add failed");
-            // }
+            
+            // Convert java.util.Date to java.sql.Time
+            java.sql.Time time = new Time(1);
+            
+            CourseModel newCourse = new CourseModel(courseID, title, credits,
+            lastNumber);
+            OnsiteCourseModel onsiteCourse = new OnsiteCourseModel(courseID,
+            textFieldTitle.getText(), Integer.parseInt(textFieldCredit.getText()),
+            lastNumber, txtLocation.getText(), txtDays.getText(), time);
+            int resultModel = CourseBUS.getInstance().addModel(newCourse);
+            int newOnsiteCourse = OnsiteCourseBUS.getInstance().addModel(onsiteCourse);
+            if (resultModel == 1 && newOnsiteCourse == 1) {
+            JOptionPane.showMessageDialog(null, "Add successfully");
+            } else {
+            JOptionPane.showMessageDialog(null, "Add failed");
+            }
         }
         table.clearSelection();
         // clearForm();
@@ -631,37 +658,37 @@ public class CourseManagement extends JPanel {
             textFieldCredit.setText(credit.toString());
             departmentComboBox.setSelectedItem(departmentName.toString());
 
-            // if(status.toString().equals("Online")) {
-            // for(OnlineCourseModel online : OnlineCourseBUS.getInstance().getAllModels())
-            // {
-            // if(Integer.parseInt(courseID.toString()) == online.getId()) {
-            //// txtUrl.setText(online.getUrl());
-            // break;
-            // }
-            // }
-            // radioOnline.setSelected(true);
-            // lbUrl.setVisible(true);
-            // txtUrl.setVisible(true);
-            // radioOnsite.setSelected(false);
-            // panel_onSite.setVisible(false);
-            // }else if(status.toString().equals("Onsite")) {
-            // radioOnsite.setSelected(true);
-            // for(OnsiteCourseModel onsite : OnsiteCourseBUS.getInstance().getAllModels())
-            // {
-            // if(Integer.parseInt(courseID.toString()) == onsite.getId()) {
-            // txtLocation.setText(onsite.getLocation());
-            // txtDays.setText(onsite.getDays());
-            // txtTime.setText(onsite.getTime()+"");
-            // }
-            // }
-            // lbLocation.setVisible(true);
-            // lbDays.setVisible(true);
-            // lbTime.setVisible(true);
-            // panel_onSite.setVisible(true);
-            // radioOnline.setSelected(false);
-            // txtUrl.setVisible(false);
-            // lbUrl.setVisible(false);
-            // }
+            if(status.toString().equals("Online")) {
+            for(OnlineCourseModel online : OnlineCourseBUS.getInstance().getAllModels())
+            {
+            if(Integer.parseInt(courseID.toString()) == online.getId()) {
+            // txtUrl.setText(online.getUrl());
+            break;
+            }
+            }
+            radioOnline.setSelected(true);
+            labelURL.setVisible(true);
+            txtURL.setVisible(true);
+            radioOnsite.setSelected(false);
+            panel_onSite.setVisible(false);
+            }else if(status.toString().equals("Onsite")) {
+            radioOnsite.setSelected(true);
+            for(OnsiteCourseModel onsite : OnsiteCourseBUS.getInstance().getAllModels())
+            {
+            if(Integer.parseInt(courseID.toString()) == onsite.getId()) {
+            txtLocation.setText(onsite.getLocation());
+            txtDays.setText(onsite.getDays());
+            txtTime.setText(onsite.getTime()+"");
+            }
+            }
+            labelLocation.setVisible(true);
+            labelDays.setVisible(true);
+            labelTime.setVisible(true);
+            panel_onSite.setVisible(true);
+            radioOnline.setSelected(false);
+            txtURL.setVisible(false);
+            labelURL.setVisible(false);
+            }
         }
     }
 
@@ -711,4 +738,14 @@ public class CourseManagement extends JPanel {
     private JTextField textFieldId;
     private JTextField textFieldSearch;
     private JTextField textFieldTitle;
+    private JPanel panel_onSite;
+    private JPanel panel_online;
+    private JLabel labelURL;
+    private JTextField txtURL;
+    private JLabel labelLocation;
+    private JLabel labelDays;
+    private JLabel labelTime;
+    private JTextField txtLocation;
+    private JTextField txtDays;
+    private JTextField txtTime;
 }

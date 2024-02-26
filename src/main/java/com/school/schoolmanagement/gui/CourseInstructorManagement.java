@@ -372,7 +372,7 @@ public class CourseInstructorManagement extends JPanel {
 
         setLayout(new BorderLayout());
 
-        panelHeader.setLayout(new GridLayout(4, 0, 0, 10));
+        panelHeader.setLayout(new GridLayout(5, 0, 0, 10));
 
         panelPerson.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         panelPerson.setLayout(new FlowLayout(FlowLayout.LEFT));
