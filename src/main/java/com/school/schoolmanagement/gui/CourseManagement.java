@@ -5,34 +5,27 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 import javax.swing.*;
 import javax.swing.table.*;
 import java.text.SimpleDateFormat;
-import java.util.List;
 import java.util.Random;
 
 import com.formdev.flatlaf.json.ParseException;
 import com.school.schoolmanagement.bus.CourseBUS;
 import com.school.schoolmanagement.bus.DepartmentBUS;
 import com.school.schoolmanagement.bus.OnlineCourseBUS;
-import com.school.schoolmanagement.bus.OnsiteCourseBUS;
 import com.school.schoolmanagement.models.CourseModel;
 import com.school.schoolmanagement.models.DepartmentModel;
 import com.school.schoolmanagement.models.OnlineCourseModel;
-import com.school.schoolmanagement.models.OnsiteCourseModel;
 import org.netbeans.lib.awtextra.*;
 
-import com.school.schoolmanagement.bus.CourseBUS;
-import com.school.schoolmanagement.bus.DepartmentBUS;
-import com.school.schoolmanagement.models.CourseModel;
-import com.school.schoolmanagement.models.DepartmentModel;
-
 public class CourseManagement extends JPanel {
+    private List<CourseModel> courseList = CourseBUS.getInstance().getAllModels();
+    private List<DepartmentModel> departmentList = DepartmentBUS.getInstance().getAllModels();
+
     public CourseManagement() {
         initComponents();
     }
@@ -144,8 +137,7 @@ public class CourseManagement extends JPanel {
         gridBagConstraints.gridy = 6;
 
         panelInfor.add(labelDepartment, gridBagConstraints);
-        List<CourseModel> courseList = CourseBUS.getInstance().getAllModels();
-        List<DepartmentModel> departmentList = DepartmentBUS.getInstance().getAllModels();
+
         String[] arr = new String[departmentList.size()];
         for (int i = 0; i < departmentList.size(); i++) {
             DepartmentModel departmentModel = departmentList.get(i);
@@ -178,90 +170,15 @@ public class CourseManagement extends JPanel {
 
         buttonAdd.setText("Add");
         panelButton.add(buttonAdd);
-        // TODO: Unfinished, bugs are expected, not auto-refreshing table when
-        // successfully adding new course.
-        // TODO: Add JPanel when choosing online / onsite course (Show options for
-        // inputting informations for one of those 2 tables).
-        // TODO: Course must have course Instructor, when it's added, prompt user to add
-        // course instructor by swapping to course instructor panel/frame.
-        buttonAdd.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                try {
-                    int courseID = Integer.parseInt(textFieldId.getText());
-                    for (int i = 0; i < courseList.size(); i++) {
-                        if (courseID == courseList.get(i).getId()) {
-                            JOptionPane.showMessageDialog(null, "ID has existed, please use another id!");
-                            return;
-                        }
-                    }
-                    String title = textFieldTitle.getText();
-                    int credits = Integer.parseInt(textFieldCredit.getText());
-                    String department = departmentComboBox.getSelectedItem().toString();
-                    int lastIndex = department.lastIndexOf(" ");
-                    int lastNumber = Integer.parseInt(department.substring(lastIndex + 1));
-                    CourseBUS.getInstance().addModel(new CourseModel(courseID, title, credits, lastNumber));
-                    CourseBUS.getInstance().refresh();
-                } catch (NumberFormatException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
         buttonDelete.setText("Delete");
         panelButton.add(buttonDelete);
-        buttonDelete.addActionListener(new ActionListener() {
-            // TODO: Unfinished, bugs are expected, not auto-refreshing table when
-            // successfully deleting a course.
-            // TODO: Show MessageDialog when successfully deleted.
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                int courseID = Integer.parseInt(textFieldId.getText());
-                CourseBUS.getInstance().deleteModel(courseID);
-                CourseBUS.getInstance().refresh();
-            }
-        });
+
         buttonUpdate.setText("Update");
         panelButton.add(buttonUpdate);
-        buttonUpdate.addActionListener(new ActionListener() {
-            // TODO: Unfinished, bugs are expected, not auto-refreshing table when
-            // successfully updating new course.
-            // TODO: Add JPanel when choosing online / onsite course (Show options for
-            // inputting informations for one of those 2 tables).
-            // TODO: Course must have course Instructor, when it's updated, prompt user to
-            // change course instructor by swapping to course instructor panel/frame, if
-            // accepeted swap to course else return.
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                try {
-                    int courseID = Integer.parseInt(textFieldId.getText());
-                    for (int i = 0; i < courseList.size(); i++) {
-                        if (i == courseList.size()) {
-                            JOptionPane.showMessageDialog(null,
-                                    "CourseID is not available / existing, please try again!");
-                            return;
-                        }
-                    }
-                    String title = textFieldTitle.getText();
-                    int credits = Integer.parseInt(textFieldCredit.getText());
-                    String department = departmentComboBox.getSelectedItem().toString();
-                    int lastIndex = department.lastIndexOf(" ");
-                    int lastNumber = Integer.parseInt(department.substring(lastIndex + 1));
-                    CourseBUS.getInstance().updateModel(new CourseModel(courseID, title, credits, lastNumber));
-                    CourseBUS.getInstance().refresh();
-                } catch (NumberFormatException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+
         buttonRefresh.setText("Refresh");
         panelButton.add(buttonRefresh);
-        // TODO: Finish the button
-        buttonRefresh.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                CourseBUS.getInstance().refresh();
-            }
-        });
+
         panelHeader.add(panelButton, BorderLayout.SOUTH);
 
         add(panelHeader, BorderLayout.NORTH);
@@ -290,47 +207,13 @@ public class CourseManagement extends JPanel {
         buttonSearch.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                String inputText = textFieldSearch.getText(); // Get the search text
-                String departmentSelected = comboBoxDepartment.getSelectedItem().toString();
-                int lastIndex = departmentSelected.lastIndexOf(" ");
-                int lastNumber = Integer.parseInt(departmentSelected.substring(lastIndex + 1));
 
-                // Search for courses based on the department ID
-                List<CourseModel> courseSearchList = CourseBUS.getInstance().searchModel(String.valueOf(lastNumber),
-                        new String[] { "DepartmentID" });
-
-                // Filter the search results based on the input text
-                List<CourseModel> filteredList = new ArrayList<>();
-                for (CourseModel course : courseSearchList) {
-                    if (inputText.isEmpty() || // If the search text is empty, add all courses
-                            course.getId() == Integer.parseInt(inputText) || // Compare IDs
-                            course.getTitle().contains(inputText) || // Check if title contains the input text
-                            String.valueOf(course.getCredit()).contains(inputText)) { // Check if credit contains the
-                                                                                      // input text
-                        filteredList.add(course);
-                    }
-                }
-
-                // Prepare data for the table model
-                String[] columnNames = { "CourseID", "Title", "Credits", "DepartmentID" };
-                Object[][] data = new Object[filteredList.size()][4];
-                for (int i = 0; i < filteredList.size(); i++) {
-                    CourseModel course = filteredList.get(i);
-                    data[i][0] = course.getId();
-                    data[i][1] = course.getTitle();
-                    data[i][2] = course.getCredit();
-                    data[i][3] = course.getDepartmentID();
-                }
-
-                // Set the table model
-                DefaultTableModel model = new DefaultTableModel(data, columnNames);
-                table.setModel(model);
             }
 
         });
 
         panel.add(panelSearch, BorderLayout.PAGE_START);
-        String[] columnNames = { "CourseID", "Title", "Credits", "DepartmentID" };
+        String[] columnNames = { "CourseID", "Title", "Credits", "DepartmentID", "Status"};
         Object[][] data = new Object[courseList.size()][4];
         for (int i = 0; i < courseList.size(); i++) {
             CourseModel course = courseList.get(i);
@@ -338,6 +221,7 @@ public class CourseManagement extends JPanel {
             data[i][1] = course.getTitle();
             data[i][2] = course.getCredit();
             data[i][3] = course.getDepartmentID();
+            //TODO: Take online or onsite?
         }
 
         DefaultTableModel model = new DefaultTableModel(data, columnNames);
@@ -353,22 +237,22 @@ public class CourseManagement extends JPanel {
             public void keyTyped(KeyEvent e) {
                 char c = e.getKeyChar();
                 if (!Character.isDigit(c)) {
-                    e.consume();  // Ignore non-digits
+                    e.consume(); // Ignore non-digits
                 }
             }
         });
 
         table.setModel(new DefaultTableModel(
-                                 new Object[][] {
-                                 },
-                                 new String[] {
-                                         "CourseID", "Title", "Credits", "DepartmentID", "Status"
-                                 }) {
-                             @Override
-                             public boolean isCellEditable(int row, int column) {
-                                 return column == getColumnCount();
-                             }
-                         }
+                new Object[][] {
+                },
+                new String[] {
+                        "CourseID", "Title", "Credits", "DepartmentID", "Status"
+                }) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return column == getColumnCount();
+            }
+        }
 
         );
 
@@ -377,13 +261,13 @@ public class CourseManagement extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 if (radioOnline.isSelected()) {
                     // Hiển thị các thành phần của A
-//                    lbUrl.setVisible(true);
-//                    txtUrl.setVisible(true);
-//                    txtLocation.setText("");
-//                    txtDays.setText("");
-//                    txtTime.setText("");
-//                    // Ẩn các thành phần của B
-//                    panel_onSite.setVisible(false);
+                    // lbUrl.setVisible(true);
+                    // txtUrl.setVisible(true);
+                    // txtLocation.setText("");
+                    // txtDays.setText("");
+                    // txtTime.setText("");
+                    // // Ẩn các thành phần của B
+                    // panel_onSite.setVisible(false);
                 }
             }
         });
@@ -392,21 +276,17 @@ public class CourseManagement extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (radioOnsite.isSelected()) {
-//                    // Hiển thị các thành phần của B
-//                    panel_onSite.setVisible(true);
-//                    txtUrl.setText("");
-//                    // Ẩn các thành phần của A
-//                    lbUrl.setVisible(false);
-//                    txtUrl.setVisible(false);
+                    // // Hiển thị các thành phần của B
+                    // panel_onSite.setVisible(true);
+                    // txtUrl.setText("");
+                    // // Ẩn các thành phần của A
+                    // lbUrl.setVisible(false);
+                    // txtUrl.setVisible(false);
                 }
             }
         });
 
         comboBoxDepartment.addItem("");
-        for(DepartmentModel department : DepartmentBUS.getInstance().getAllModels()) {
-            comboBoxDepartment.addItem(department.getName()+"");
-        }
-
         comboBoxStatus.addItem("");
         comboBoxStatus.addItem("Online");
         comboBoxStatus.addItem("Onsite");
@@ -414,7 +294,7 @@ public class CourseManagement extends JPanel {
         buttonRefresh.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-//                clearForm();
+                // clearForm();
                 btnGroup.clearSelection();
                 showListCourse();
             }
@@ -437,14 +317,15 @@ public class CourseManagement extends JPanel {
                     return;
                 }
 
-                int choice = JOptionPane.showConfirmDialog(null, "Do you want to delete this course?", "Confirm Deletion",
+                int choice = JOptionPane.showConfirmDialog(null, "Do you want to delete this course?",
+                        "Confirm Deletion",
                         JOptionPane.YES_NO_OPTION);
                 if (choice == JOptionPane.YES_OPTION) {
                     int courseID = (int) table.getModel().getValueAt(selectedRow, 0);
                     deleteCourse(courseID);
                     showListCourse();
                 }
-//                clearForm();
+                // clearForm();
             }
         });
 
@@ -459,13 +340,12 @@ public class CourseManagement extends JPanel {
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     String searchValue = textFieldSearch.getText().trim();
-                    String[] columnNames = {"CourseID" ,"Title", "Credits", "DepartmentID"};
+                    String[] columnNames = { "CourseID", "Title", "Credits" };
                     List<CourseModel> searchResults = CourseBUS.getInstance().searchModel(searchValue, columnNames);
                     showSearchResult(searchResults);
                 }
             }
         });
-
 
         buttonUpdate.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -480,70 +360,106 @@ public class CourseManagement extends JPanel {
                     int credit = Integer.parseInt(textFieldCredit.getText());
                     String departmentName = (String) comboBoxDepartment.getSelectedItem();
                     int departmentID = 0;
-                    for(DepartmentModel department : DepartmentBUS.getInstance().getAllModels()) {
-                        if(departmentName.equals(department.getName())) {
+                    for (DepartmentModel department : DepartmentBUS.getInstance().getAllModels()) {
+                        if (departmentName.equals(department.getName())) {
                             departmentID = department.getDepartmentID();
                         }
                     }
-                    Object status = table.getValueAt(index,4);
-                    if(status.toString().equals("Online")) {
-//                        String url = txtUrl.getText();
-                        CourseModel updateModel = new CourseModel(courseID,title,credit,departmentID);
-//                        OnlineCourseModel updateOnlineModel = new OnlineCourseModel(courseID,null,0,0,url);
-//                        int resultModel = CourseBUS.getInstance().updateModel(updateModel);
-//                        int resultOnlineModel = OnlineCourseBUS.getInstance().updateModel(updateOnlineModel);
-//                        if(resultModel > 0 && resultOnlineModel > 0) {
-//                            JOptionPane.showMessageDialog(null, "Update successfully", "Success",
-//                                    JOptionPane.INFORMATION_MESSAGE);
-//                        }
+                    Object status = table.getValueAt(index, 4);
+                    if (status.toString().equals("Online")) {
+                        // String url = txtUrl.getText();
+                        CourseModel updateModel = new CourseModel(courseID, title, credit, departmentID);
+                        // OnlineCourseModel updateOnlineModel = new
+                        // OnlineCourseModel(courseID,null,0,0,url);
+                        // int resultModel = CourseBUS.getInstance().updateModel(updateModel);
+                        // int resultOnlineModel =
+                        // OnlineCourseBUS.getInstance().updateModel(updateOnlineModel);
+                        // if(resultModel > 0 && resultOnlineModel > 0) {
+                        // JOptionPane.showMessageDialog(null, "Update successfully", "Success",
+                        // JOptionPane.INFORMATION_MESSAGE);
+                        // }
                         showListCourse();
-//                        txtUrl.setVisible(true);
+                        // txtUrl.setVisible(true);
                         table.clearSelection();
-                    }else if(status.toString().equals("Onsite")) {
-//                        String timeText = txtTime.getText();
+                    } else if (status.toString().equals("Onsite")) {
+                        // String timeText = txtTime.getText();
                         SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
 
-                        java.util.Date parsedDate;  // Change to java.util.Date
+                        java.util.Date parsedDate; // Change to java.util.Date
                         try {
-//                            parsedDate = timeFormat.parse(timeText);
+                            // parsedDate = timeFormat.parse(timeText);
                         } catch (ParseException e1) {
                             throw new RuntimeException(e1);
                         }
-//                        java.sql.Time time = new java.sql.Time(parsedDate.getTime());
+                        // java.sql.Time time = new java.sql.Time(parsedDate.getTime());
 
-//                        CourseModel updateModel = new CourseModel(courseID,title,credit,departmentID);
-//                        OnsiteCourseModel updateOnsiteCourse = new OnsiteCourseModel(courseID,null,0,0,txtLocation.getText(),txtDays.getText(),time);
-//
-//                        int resultModel = CourseBUS.getInstance().updateModel(updateModel);
-//                        int resultOnsiteModel = OnsiteCourseBUS.getInstance().updateModel(updateOnsiteCourse);
-//
-//                        if(resultModel > 0 && resultOnsiteModel > 0) {
-//                            JOptionPane.showMessageDialog(null, "Update successfully", "Success",
-//                                    JOptionPane.INFORMATION_MESSAGE);
-//                        }
+                        // CourseModel updateModel = new
+                        // CourseModel(courseID,title,credit,departmentID);
+                        // OnsiteCourseModel updateOnsiteCourse = new
+                        // OnsiteCourseModel(courseID,null,0,0,txtLocation.getText(),txtDays.getText(),time);
+                        //
+                        // int resultModel = CourseBUS.getInstance().updateModel(updateModel);
+                        // int resultOnsiteModel =
+                        // OnsiteCourseBUS.getInstance().updateModel(updateOnsiteCourse);
+                        //
+                        // if(resultModel > 0 && resultOnsiteModel > 0) {
+                        // JOptionPane.showMessageDialog(null, "Update successfully", "Success",
+                        // JOptionPane.INFORMATION_MESSAGE);
+                        // }
 
                         showListCourse();
-//                        panel_onSite.setVisible(true);
+                        // panel_onSite.setVisible(true);
                         table.clearSelection();
                     }
                 }
-//                clearForm();
+                // clearForm();
             }
         });
 
         buttonSearch.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String value = textFieldSearch.getText();
-                String departmentName = comboBoxDepartment.getSelectedItem()+"";
-                String status = comboBoxStatus.getSelectedItem()+"";
+                String inputText = textFieldSearch.getText(); // Get the search text
+                String departmentSelected = comboBoxDepartment.getSelectedItem().toString();
+                int lastIndex = departmentSelected.lastIndexOf(" ");
+                int lastNumber = Integer.parseInt(departmentSelected.substring(lastIndex + 1));
+                List<CourseModel> courseSearchList;
+                // Search for courses based on the department ID
+                if (!departmentSelected.isEmpty()) {
+                    courseSearchList = CourseBUS.getInstance().searchModel(String.valueOf(lastNumber),
+                            new String[] { "DepartmentID" });
+                } else {
+                    courseSearchList = CourseBUS.getInstance().getAllModels();
+                }
 
-                List<CourseModel> models = CourseBUS.getInstance().searchConditions(value,departmentName,status);
-                showSearchResult(models);
+                // Filter the search results based on the input text
+                List<CourseModel> filteredList = new ArrayList<>();
+                for (CourseModel course : courseSearchList) {
+                    if (inputText.isEmpty() || // If the search text is empty, add all courses
+                            course.getId() == Integer.parseInt(inputText) || // Compare IDs
+                            course.getTitle().contains(inputText) || // Check if title contains the input text
+                            String.valueOf(course.getCredit()).contains(inputText)) { // Check if credit contains the
+                                                                                      // input text
+                        filteredList.add(course);
+                    }
+                }
+                // Prepare data for the table model
+                String[] columnNames = { "CourseID", "Title", "Credits", "DepartmentID" };
+                Object[][] data = new Object[filteredList.size()][4];
+                for (int i = 0; i < filteredList.size(); i++) {
+                    CourseModel course = filteredList.get(i);
+                    data[i][0] = course.getId();
+                    data[i][1] = course.getTitle();
+                    data[i][2] = course.getCredit();
+                    data[i][3] = course.getDepartmentID();
+                }
+
+                // Set the table model
+                DefaultTableModel model = new DefaultTableModel(data, columnNames);
+                table.setModel(model);
             }
         });
-
-        showListCourse();
+        // showListCourse();
     }
 
     public void showListCourse() {
@@ -552,126 +468,141 @@ public class CourseManagement extends JPanel {
         DefaultTableModel model_table = (DefaultTableModel) table.getModel();
         model_table.setRowCount(0);
 
-
         DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
         renderer.setHorizontalAlignment(SwingConstants.CENTER);
 
         for (CourseModel course : CourseBUS.getInstance().getAllModels()) {
             boolean check = false;
 
-            for(DepartmentModel department : DepartmentBUS.getInstance().getAllModels()) {
-                if(course.getDepartmentID() == department.getDepartmentID()) { // get name
-                    for(OnlineCourseModel online : OnlineCourseBUS.getInstance().getAllModels()) {
-                        if(course.getId() == online.getId()) {
-                            model_table.addRow(new Object[]{course.getId(), course.getTitle(), course.getCredit(), department.getName(), "Online"});
+            for (DepartmentModel department : DepartmentBUS.getInstance().getAllModels()) {
+                if (course.getDepartmentID() == department.getDepartmentID()) { // get name
+                    for (OnlineCourseModel online : OnlineCourseBUS.getInstance().getAllModels()) {
+                        if (course.getId() == online.getId()) {
+                            model_table.addRow(new Object[] { course.getId(), course.getTitle(), course.getCredit(),
+                                    department.getName(), "Online" });
                             check = true;
                         }
                     }
 
-                    if(!check) {
-                        model_table.addRow(new Object[]{course.getId(), course.getTitle(), course.getCredit(), department.getName(), "Onsite"});
+                    if (!check) {
+                        model_table.addRow(new Object[] { course.getId(), course.getTitle(), course.getCredit(),
+                                department.getName(), "Onsite" });
                     }
                 }
             }
         }
     }
 
-//    public void clearForm() {
-//        textFieldId.setText("");
-//        textFieldTitle.setText("");
-//        textFieldCredit.setText("");
-//        comboBoxDepartment.setSelectedIndex(-1);
-//        txtUrl.setText("");
-//        txtLocation.setText("");
-//        txtDays.setText("");
-//        txtTime.setText("");
-//        textFieldSearch.setText("");
-//        comboBoxDepartment.setSelectedItem("");
-//        comboBoxStatus.setSelectedItem("");
-//        txtLocation.setText("");
-//        txtDays.setText("");
-//        txtTime.setText("");
-//        lbUrl.setVisible(false);
-//        txtUrl.setVisible(false);
-//        radioOnsite.setSelected(false);
-//        lbLocation.setVisible(false);
-//        lbTime.setVisible(false);
-//        lbDays.setVisible(false);
-//        panel_onSite.setVisible(false);
-//    }
+    // public void clearForm() {
+    // textFieldId.setText("");
+    // textFieldTitle.setText("");
+    // textFieldCredit.setText("");
+    // comboBoxDepartment.setSelectedIndex(-1);
+    // txtUrl.setText("");
+    // txtLocation.setText("");
+    // txtDays.setText("");
+    // txtTime.setText("");
+    // textFieldSearch.setText("");
+    // comboBoxDepartment.setSelectedItem("");
+    // comboBoxStatus.setSelectedItem("");
+    // txtLocation.setText("");
+    // txtDays.setText("");
+    // txtTime.setText("");
+    // lbUrl.setVisible(false);
+    // txtUrl.setVisible(false);
+    // radioOnsite.setSelected(false);
+    // lbLocation.setVisible(false);
+    // lbTime.setVisible(false);
+    // lbDays.setVisible(false);
+    // panel_onSite.setVisible(false);
+    // }
 
     public void addCourse() {
-        if (!radioOnline.isSelected() && !radioOnsite.isSelected()) {
-            JOptionPane.showMessageDialog(null, "Please choose course type (Online, onsite)");
-            return;
-        }
-
-        int CourseID = randomCourseID();
-        String title = textFieldTitle.getText() + "";
-        int credits = Integer.parseInt(textFieldCredit.getText() + "");
-        String departmentName = comboBoxDepartment.getSelectedItem() + "";
-        int departmentID = 0;
-        for(DepartmentModel department : DepartmentBUS.getInstance().getAllModels()) {
-            if(departmentName.equals(department.getName())) {
-                departmentID = department.getDepartmentID();
+        try {
+            int courseID = Integer.parseInt(textFieldId.getText());
+            for (int i = 0; i < courseList.size(); i++) {
+                if (courseID == courseList.get(i).getId()) {
+                    JOptionPane.showMessageDialog(null, "ID has existed, please use another id!");
+                    return;
+                }
             }
+            String title = textFieldTitle.getText();
+            int credits = Integer.parseInt(textFieldCredit.getText());
+            String department = departmentComboBox.getSelectedItem().toString();
+            int lastIndex = department.lastIndexOf(" ");
+            int lastNumber = Integer.parseInt(department.substring(lastIndex + 1));
+            if (!radioOnline.isSelected() && !radioOnsite.isSelected()) {
+                JOptionPane.showMessageDialog(null, "Please choose course type (Online, onsite)");
+                return;
+            }
+            CourseBUS.getInstance().addModel(new CourseModel(courseID, title, credits, lastNumber));
+            CourseBUS.getInstance().refresh();
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
         }
 
         if (radioOnline.isSelected()) {
-//            String url = txtUrl.getText() + "";
-//            CourseModel newCourse = new CourseModel(CourseID, title, credits, departmentID);
-//            OnlineCourseModel onlineCourse = new OnlineCourseModel(CourseID, title, credits, departmentID, url);
-//            int resultModel = CourseBUS.getInstance().addModel(newCourse);
-//            int newOnlineCourse = OnlineCourseBUS.getInstance().addModel(onlineCourse);
-//            if (resultModel == 1 && newOnlineCourse == 1) {
-//                JOptionPane.showMessageDialog(null, "Add successfully");
-//            } else {
-//                JOptionPane.showMessageDialog(null, "Add failed");
-//            }
+            // String url = txtUrl.getText() + "";
+            // CourseModel newCourse = new CourseModel(CourseID, title, credits,
+            // departmentID);
+            // OnlineCourseModel onlineCourse = new OnlineCourseModel(CourseID, title,
+            // credits, departmentID, url);
+            // int resultModel = CourseBUS.getInstance().addModel(newCourse);
+            // int newOnlineCourse = OnlineCourseBUS.getInstance().addModel(onlineCourse);
+            // if (resultModel == 1 && newOnlineCourse == 1) {
+            // JOptionPane.showMessageDialog(null, "Add successfully");
+            // } else {
+            // JOptionPane.showMessageDialog(null, "Add failed");
+            // }
         } else if (radioOnsite.isSelected()) {
-//            String timeText = txtTime.getText();
-//
-//            String timeRegex = "([01]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]";
-//
-//            if (!timeText.matches(timeRegex)) {
-//                JOptionPane.showMessageDialog(null, "Invalid time format");
-//                return;
-//            }
-//
-//            String[] timeParts = timeText.split(":");
-//            int hours = Integer.parseInt(timeParts[0]);
-//            int minutes = Integer.parseInt(timeParts[1]);
-//            int seconds = Integer.parseInt(timeParts[2]);
-//
-//            if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59 || seconds < 0 || seconds > 59) {
-//                JOptionPane.showMessageDialog(null, "Invalid time values. Please use valid hour, minute, and second values.");
-//                return;
-//            }
-//
-//            SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-//            java.util.Date parsedDate;  // Change to java.util.Date
-//
-//            try {
-//                parsedDate = timeFormat.parse(timeText);
-//            } catch (ParseException e) {
-//                throw new RuntimeException(e);
-//            }
-//
-//            // Convert java.util.Date to java.sql.Time
-//            java.sql.Time time = new java.sql.Time(parsedDate.getTime());
-//
-//            CourseModel newCourse = new CourseModel(CourseID, title, credits, departmentID);
-//            OnsiteCourseModel onsiteCourse = new OnsiteCourseModel(CourseID, textFieldTitle.getText(), Integer.parseInt(textFieldCredit.getText()), departmentID, txtLocation.getText(), txtDays.getText(), time);
-//            int resultModel = CourseBUS.getInstance().addModel(newCourse);
-//            int newOnsiteCourse = OnsiteCourseBUS.getInstance().addModel(onsiteCourse);
-//            if (resultModel == 1 && newOnsiteCourse == 1) {
-//                JOptionPane.showMessageDialog(null, "Add successfully");
-//            } else {
-//                JOptionPane.showMessageDialog(null, "Add failed");
-//            }
+            // String timeText = txtTime.getText();
+            //
+            // String timeRegex = "([01]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]";
+            //
+            // if (!timeText.matches(timeRegex)) {
+            // JOptionPane.showMessageDialog(null, "Invalid time format");
+            // return;
+            // }
+            //
+            // String[] timeParts = timeText.split(":");
+            // int hours = Integer.parseInt(timeParts[0]);
+            // int minutes = Integer.parseInt(timeParts[1]);
+            // int seconds = Integer.parseInt(timeParts[2]);
+            //
+            // if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59 || seconds < 0 ||
+            // seconds > 59) {
+            // JOptionPane.showMessageDialog(null, "Invalid time values. Please use valid
+            // hour, minute, and second values.");
+            // return;
+            // }
+            //
+            // SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+            // java.util.Date parsedDate; // Change to java.util.Date
+            //
+            // try {
+            // parsedDate = timeFormat.parse(timeText);
+            // } catch (ParseException e) {
+            // throw new RuntimeException(e);
+            // }
+            //
+            // // Convert java.util.Date to java.sql.Time
+            // java.sql.Time time = new java.sql.Time(parsedDate.getTime());
+            //
+            // CourseModel newCourse = new CourseModel(CourseID, title, credits,
+            // departmentID);
+            // OnsiteCourseModel onsiteCourse = new OnsiteCourseModel(CourseID,
+            // textFieldTitle.getText(), Integer.parseInt(textFieldCredit.getText()),
+            // departmentID, txtLocation.getText(), txtDays.getText(), time);
+            // int resultModel = CourseBUS.getInstance().addModel(newCourse);
+            // int newOnsiteCourse = OnsiteCourseBUS.getInstance().addModel(onsiteCourse);
+            // if (resultModel == 1 && newOnsiteCourse == 1) {
+            // JOptionPane.showMessageDialog(null, "Add successfully");
+            // } else {
+            // JOptionPane.showMessageDialog(null, "Add failed");
+            // }
         }
         table.clearSelection();
-//        clearForm();
+        // clearForm();
         showListCourse();
     }
 
@@ -688,54 +619,52 @@ public class CourseManagement extends JPanel {
 
     public void handleRowSelection() {
         int selectedRow = table.getSelectedRow();
-        if(selectedRow != -1) {
-            Object courseID = table.getValueAt(selectedRow,0);
-            Object title = table.getValueAt(selectedRow,1);
-            Object credit = table.getValueAt(selectedRow,2);
-            Object departmentName = table.getValueAt(selectedRow,3);
-            Object status = table.getValueAt(selectedRow,4);
+        if (selectedRow != -1) {
+            Object courseID = table.getValueAt(selectedRow, 0);
+            Object title = table.getValueAt(selectedRow, 1);
+            Object credit = table.getValueAt(selectedRow, 2);
+            Object departmentName = table.getValueAt(selectedRow, 3);
+            Object status = table.getValueAt(selectedRow, 4);
 
             textFieldId.setText(courseID.toString());
             textFieldTitle.setText(title.toString());
             textFieldCredit.setText(credit.toString());
             departmentComboBox.setSelectedItem(departmentName.toString());
 
-//            if(status.toString().equals("Online")) {
-//                for(OnlineCourseModel online : OnlineCourseBUS.getInstance().getAllModels()) {
-//                    if(Integer.parseInt(courseID.toString()) == online.getId()) {
-////                        txtUrl.setText(online.getUrl());
-//                        break;
-//                    }
-//                }
-//                radioOnline.setSelected(true);
-//                lbUrl.setVisible(true);
-//                txtUrl.setVisible(true);
-//                radioOnsite.setSelected(false);
-//                panel_onSite.setVisible(false);
-//            }else if(status.toString().equals("Onsite")) {
-//                radioOnsite.setSelected(true);
-//                for(OnsiteCourseModel onsite : OnsiteCourseBUS.getInstance().getAllModels()) {
-//                    if(Integer.parseInt(courseID.toString()) == onsite.getId()) {
-//                        txtLocation.setText(onsite.getLocation());
-//                        txtDays.setText(onsite.getDays());
-//                        txtTime.setText(onsite.getTime()+"");
-//                    }
-//                }
-//                lbLocation.setVisible(true);
-//                lbDays.setVisible(true);
-//                lbTime.setVisible(true);
-//                panel_onSite.setVisible(true);
-//                radioOnline.setSelected(false);
-//                txtUrl.setVisible(false);
-//                lbUrl.setVisible(false);
-//            }
+            // if(status.toString().equals("Online")) {
+            // for(OnlineCourseModel online : OnlineCourseBUS.getInstance().getAllModels())
+            // {
+            // if(Integer.parseInt(courseID.toString()) == online.getId()) {
+            //// txtUrl.setText(online.getUrl());
+            // break;
+            // }
+            // }
+            // radioOnline.setSelected(true);
+            // lbUrl.setVisible(true);
+            // txtUrl.setVisible(true);
+            // radioOnsite.setSelected(false);
+            // panel_onSite.setVisible(false);
+            // }else if(status.toString().equals("Onsite")) {
+            // radioOnsite.setSelected(true);
+            // for(OnsiteCourseModel onsite : OnsiteCourseBUS.getInstance().getAllModels())
+            // {
+            // if(Integer.parseInt(courseID.toString()) == onsite.getId()) {
+            // txtLocation.setText(onsite.getLocation());
+            // txtDays.setText(onsite.getDays());
+            // txtTime.setText(onsite.getTime()+"");
+            // }
+            // }
+            // lbLocation.setVisible(true);
+            // lbDays.setVisible(true);
+            // lbTime.setVisible(true);
+            // panel_onSite.setVisible(true);
+            // radioOnline.setSelected(false);
+            // txtUrl.setVisible(false);
+            // lbUrl.setVisible(false);
+            // }
         }
     }
 
-    public int randomCourseID() {
-        Random rand = new Random();
-        return rand.nextInt(9999) + 1;
-    }
     public void showSearchResult(List<CourseModel> search) {
         DefaultTableModel model = (DefaultTableModel) table.getModel();
         model.setRowCount(0);
@@ -746,7 +675,7 @@ public class CourseManagement extends JPanel {
 
             boolean isOnline = (online != null && !online.getUrl().isEmpty());
 
-            model.addRow(new Object[]{
+            model.addRow(new Object[] {
                     course.getId(),
                     course.getTitle(),
                     course.getCredit(),
