@@ -3,6 +3,10 @@ package com.school.schoolmanagement.gui;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
@@ -23,10 +27,16 @@ import com.school.schoolmanagement.models.OnlineCourseModel;
 import com.school.schoolmanagement.models.OnsiteCourseModel;
 import org.netbeans.lib.awtextra.*;
 
+import com.school.schoolmanagement.bus.CourseBUS;
+import com.school.schoolmanagement.bus.DepartmentBUS;
+import com.school.schoolmanagement.models.CourseModel;
+import com.school.schoolmanagement.models.DepartmentModel;
+
 public class CourseManagement extends JPanel {
     public CourseManagement() {
         initComponents();
     }
+
     private void initComponents() {
         GridBagConstraints gridBagConstraints;
         ButtonGroup btnGroup = new ButtonGroup();
@@ -65,8 +75,8 @@ public class CourseManagement extends JPanel {
         panelHeader.setLayout(new BorderLayout());
 
         GridBagLayout panelInforLayout = new GridBagLayout();
-        panelInforLayout.columnWidths = new int[] {0, 10, 0};
-        panelInforLayout.rowHeights = new int[] {0, 10, 0, 10, 0, 10, 0};
+        panelInforLayout.columnWidths = new int[] { 0, 10, 0 };
+        panelInforLayout.rowHeights = new int[] { 0, 10, 0, 10, 0, 10, 0 };
         panelInfor.setLayout(panelInforLayout);
 
         labelId.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -80,7 +90,7 @@ public class CourseManagement extends JPanel {
         panelInfor.add(labelId, gridBagConstraints);
 
         textFieldId.setPreferredSize(new Dimension(220, 22));
-        
+
         gridBagConstraints = new GridBagConstraints();
 
         gridBagConstraints.gridx = 2;
@@ -100,7 +110,7 @@ public class CourseManagement extends JPanel {
         panelInfor.add(labelTitle, gridBagConstraints);
 
         textFieldTitle.setPreferredSize(new Dimension(220, 22));
-        
+
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 2;
@@ -134,13 +144,17 @@ public class CourseManagement extends JPanel {
         gridBagConstraints.gridy = 6;
 
         panelInfor.add(labelDepartment, gridBagConstraints);
-
-        departmentComboBox.addItem("");
-        for(DepartmentModel department : DepartmentBUS.getInstance().getAllModels()) {
-            departmentComboBox.addItem(department.getName()+"");
+        List<CourseModel> courseList = CourseBUS.getInstance().getAllModels();
+        List<DepartmentModel> departmentList = DepartmentBUS.getInstance().getAllModels();
+        String[] arr = new String[departmentList.size()];
+        for (int i = 0; i < departmentList.size(); i++) {
+            DepartmentModel departmentModel = departmentList.get(i);
+            arr[i] = departmentModel.getName() + " id: " + departmentModel.getDepartmentID();
         }
+        departmentComboBox
+                .setModel(new DefaultComboBoxModel<>(arr));
         departmentComboBox.setPreferredSize(new Dimension(220, 22));
-        
+
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 6;
@@ -151,11 +165,11 @@ public class CourseManagement extends JPanel {
         panelCourse.setLayout(new AbsoluteLayout());
 
         radioOnline.setText("Online Course");
-       
+
         panelCourse.add(radioOnline, new AbsoluteConstraints(20, 20, -1, -1));
 
         radioOnsite.setText("Onsite Course");
-        
+
         panelCourse.add(radioOnsite, new AbsoluteConstraints(140, 20, -1, -1));
 
         panelHeader.add(panelCourse, BorderLayout.CENTER);
@@ -164,16 +178,90 @@ public class CourseManagement extends JPanel {
 
         buttonAdd.setText("Add");
         panelButton.add(buttonAdd);
-
+        // TODO: Unfinished, bugs are expected, not auto-refreshing table when
+        // successfully adding new course.
+        // TODO: Add JPanel when choosing online / onsite course (Show options for
+        // inputting informations for one of those 2 tables).
+        // TODO: Course must have course Instructor, when it's added, prompt user to add
+        // course instructor by swapping to course instructor panel/frame.
+        buttonAdd.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                try {
+                    int courseID = Integer.parseInt(textFieldId.getText());
+                    for (int i = 0; i < courseList.size(); i++) {
+                        if (courseID == courseList.get(i).getId()) {
+                            JOptionPane.showMessageDialog(null, "ID has existed, please use another id!");
+                            return;
+                        }
+                    }
+                    String title = textFieldTitle.getText();
+                    int credits = Integer.parseInt(textFieldCredit.getText());
+                    String department = departmentComboBox.getSelectedItem().toString();
+                    int lastIndex = department.lastIndexOf(" ");
+                    int lastNumber = Integer.parseInt(department.substring(lastIndex + 1));
+                    CourseBUS.getInstance().addModel(new CourseModel(courseID, title, credits, lastNumber));
+                    CourseBUS.getInstance().refresh();
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
         buttonDelete.setText("Delete");
         panelButton.add(buttonDelete);
-
+        buttonDelete.addActionListener(new ActionListener() {
+            // TODO: Unfinished, bugs are expected, not auto-refreshing table when
+            // successfully deleting a course.
+            // TODO: Show MessageDialog when successfully deleted.
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                int courseID = Integer.parseInt(textFieldId.getText());
+                CourseBUS.getInstance().deleteModel(courseID);
+                CourseBUS.getInstance().refresh();
+            }
+        });
         buttonUpdate.setText("Update");
         panelButton.add(buttonUpdate);
-
+        buttonUpdate.addActionListener(new ActionListener() {
+            // TODO: Unfinished, bugs are expected, not auto-refreshing table when
+            // successfully updating new course.
+            // TODO: Add JPanel when choosing online / onsite course (Show options for
+            // inputting informations for one of those 2 tables).
+            // TODO: Course must have course Instructor, when it's updated, prompt user to
+            // change course instructor by swapping to course instructor panel/frame, if
+            // accepeted swap to course else return.
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                try {
+                    int courseID = Integer.parseInt(textFieldId.getText());
+                    for (int i = 0; i < courseList.size(); i++) {
+                        if (i == courseList.size()) {
+                            JOptionPane.showMessageDialog(null,
+                                    "CourseID is not available / existing, please try again!");
+                            return;
+                        }
+                    }
+                    String title = textFieldTitle.getText();
+                    int credits = Integer.parseInt(textFieldCredit.getText());
+                    String department = departmentComboBox.getSelectedItem().toString();
+                    int lastIndex = department.lastIndexOf(" ");
+                    int lastNumber = Integer.parseInt(department.substring(lastIndex + 1));
+                    CourseBUS.getInstance().updateModel(new CourseModel(courseID, title, credits, lastNumber));
+                    CourseBUS.getInstance().refresh();
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
         buttonRefresh.setText("Refresh");
         panelButton.add(buttonRefresh);
-
+        // TODO: Finish the button
+        buttonRefresh.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                CourseBUS.getInstance().refresh();
+            }
+        });
         panelHeader.add(panelButton, BorderLayout.SOUTH);
 
         add(panelHeader, BorderLayout.NORTH);
@@ -184,12 +272,13 @@ public class CourseManagement extends JPanel {
 
         textFieldSearch.setToolTipText("");
         textFieldSearch.setPreferredSize(new Dimension(170, 22));
-        
-        panelSearch.add(textFieldSearch);
 
+        panelSearch.add(textFieldSearch);
+        comboBoxDepartment
+                .setModel(new DefaultComboBoxModel<>(arr));
         comboBoxDepartment.setBorder(BorderFactory.createTitledBorder("Department"));
         comboBoxDepartment.setPreferredSize(new Dimension(130, 43));
-        
+
         panelSearch.add(comboBoxDepartment);
 
         comboBoxStatus.setBorder(BorderFactory.createTitledBorder("Status"));
@@ -198,20 +287,62 @@ public class CourseManagement extends JPanel {
 
         buttonSearch.setText("Search");
         panelSearch.add(buttonSearch);
+        buttonSearch.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                String inputText = textFieldSearch.getText(); // Get the search text
+                String departmentSelected = comboBoxDepartment.getSelectedItem().toString();
+                int lastIndex = departmentSelected.lastIndexOf(" ");
+                int lastNumber = Integer.parseInt(departmentSelected.substring(lastIndex + 1));
+
+                // Search for courses based on the department ID
+                List<CourseModel> courseSearchList = CourseBUS.getInstance().searchModel(String.valueOf(lastNumber),
+                        new String[] { "DepartmentID" });
+
+                // Filter the search results based on the input text
+                List<CourseModel> filteredList = new ArrayList<>();
+                for (CourseModel course : courseSearchList) {
+                    if (inputText.isEmpty() || // If the search text is empty, add all courses
+                            course.getId() == Integer.parseInt(inputText) || // Compare IDs
+                            course.getTitle().contains(inputText) || // Check if title contains the input text
+                            String.valueOf(course.getCredit()).contains(inputText)) { // Check if credit contains the
+                                                                                      // input text
+                        filteredList.add(course);
+                    }
+                }
+
+                // Prepare data for the table model
+                String[] columnNames = { "CourseID", "Title", "Credits", "DepartmentID" };
+                Object[][] data = new Object[filteredList.size()][4];
+                for (int i = 0; i < filteredList.size(); i++) {
+                    CourseModel course = filteredList.get(i);
+                    data[i][0] = course.getId();
+                    data[i][1] = course.getTitle();
+                    data[i][2] = course.getCredit();
+                    data[i][3] = course.getDepartmentID();
+                }
+
+                // Set the table model
+                DefaultTableModel model = new DefaultTableModel(data, columnNames);
+                table.setModel(model);
+            }
+
+        });
 
         panel.add(panelSearch, BorderLayout.PAGE_START);
+        String[] columnNames = { "CourseID", "Title", "Credits", "DepartmentID" };
+        Object[][] data = new Object[courseList.size()][4];
+        for (int i = 0; i < courseList.size(); i++) {
+            CourseModel course = courseList.get(i);
+            data[i][0] = course.getId();
+            data[i][1] = course.getTitle();
+            data[i][2] = course.getCredit();
+            data[i][3] = course.getDepartmentID();
+        }
 
-        table.setModel(new DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
+        DefaultTableModel model = new DefaultTableModel(data, columnNames);
+        table.setModel(model);
+
         scrollPane.setViewportView(table);
 
         panel.add(scrollPane, BorderLayout.CENTER);
