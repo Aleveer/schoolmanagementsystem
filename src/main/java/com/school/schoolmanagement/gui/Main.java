@@ -40,6 +40,7 @@ public class Main extends javax.swing.JFrame {
         panelButton.add(buttonCourseInstructor);
 
         buttonStudentGrade.setText("Studen Grade");
+        buttonStudentGrade.addActionListener(changePanelGrade);
         panelButton.add(buttonStudentGrade);
 
         CourseManagement courseManagement = new CourseManagement();
@@ -91,6 +92,22 @@ public class Main extends javax.swing.JFrame {
             Main.getInstance().repaint();
 
             Main.getInstance().getContentPane().add(courseManagement, BorderLayout.CENTER);
+            Main.getInstance().revalidate();
+            Main.getInstance().repaint();
+        }
+    };
+    private ActionListener changePanelGrade = new ActionListener() {
+
+        @Override
+        public void actionPerformed(ActionEvent arg0) {
+            StudentGrade studentGrade = new StudentGrade();
+            Container contentPane = Main.getInstance().getContentPane();
+            Component centerComponent = ((BorderLayout) contentPane.getLayout()).getLayoutComponent(BorderLayout.CENTER);
+            Main.getInstance().remove(centerComponent);
+            Main.getInstance().revalidate();
+            Main.getInstance().repaint();
+
+            Main.getInstance().getContentPane().add(studentGrade, BorderLayout.CENTER);
             Main.getInstance().revalidate();
             Main.getInstance().repaint();
         }
