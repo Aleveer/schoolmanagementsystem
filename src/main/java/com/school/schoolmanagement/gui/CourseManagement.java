@@ -567,7 +567,7 @@ public class CourseManagement extends JPanel {
             textFieldId.setText(courseID.toString());
             textFieldTitle.setText(title.toString());
             textFieldCredit.setText(credit.toString());
-            comboBoxDepartment.setSelectedItem(departmentName.toString());
+            departmentComboBox.setSelectedItem(departmentName.toString());
 
 //            if(status.toString().equals("Online")) {
 //                for(OnlineCourseModel online : OnlineCourseBUS.getInstance().getAllModels()) {
