@@ -265,6 +265,26 @@ public class CourseInstructorManagement extends JPanel {
                         JOptionPane.INFORMATION_MESSAGE);
             }
         });
+
+        //    Not assign button listener
+        buttonNoAssign.addActionListener(e -> {
+            int selectedRow = tbList.getSelectedRow();
+            if (selectedRow == -1) {
+                JOptionPane.showMessageDialog(null, "Please choose an instructor", "Attention",
+                        JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+
+            int courseId = Integer.parseInt(tbList.getValueAt(selectedRow, 0).toString());
+            int personId = Integer.parseInt(tbList.getValueAt(selectedRow, 2).toString());
+            if (CourseInstructorBUS.getInstance().deleteModel(courseId, personId) == 1) {
+                JOptionPane.showMessageDialog(null, "Delete successfully");
+                tbList.clearSelection();
+                showListCourseInstructor();
+            } else {
+                JOptionPane.showMessageDialog(null, "Delete failed");
+            }
+        });
     }
 
     private void showListCourseInstructor() {
