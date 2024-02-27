@@ -6,6 +6,9 @@ public class StudentGradeModel {
     private int enrollmentID,courseID,studentID;
     private BigDecimal grade;
 
+    public StudentGradeModel() {
+    }
+
     public StudentGradeModel(int enrollmentID, int courseID, int studentID, BigDecimal grade) {
         this.enrollmentID = enrollmentID;
         this.courseID = courseID;
