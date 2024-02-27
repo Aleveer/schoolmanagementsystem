@@ -35,7 +35,7 @@ public class StudentGradeBUS {
     public StudentGradeModel getModelById(int id) {
         refresh();
         for (StudentGradeModel StudentGradeModel : studentGradeList) {
-            if (StudentGradeModel.getCourseID() == id) {
+            if (StudentGradeModel.getEnrollmentID() == id) {
                 return StudentGradeModel;
             }
         }

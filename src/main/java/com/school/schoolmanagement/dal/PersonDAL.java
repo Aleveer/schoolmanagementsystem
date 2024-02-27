@@ -49,7 +49,7 @@ public class PersonDAL {
     }
 
     public int insert(PersonModel person) {
-        String insertSql = "INSERT INTO Person (PersonID, Lastname, Firstname, HireDate, EnrollmentDate) VALUES (?, ?, ?, ?)";
+        String insertSql = "INSERT INTO Person (PersonID, Lastname, Firstname, HireDate, EnrollmentDate) VALUES (?, ?, ?, ?, ?)";
         Object[] args = {
                 person.getPersonID(),
                 person.getLastName(),
