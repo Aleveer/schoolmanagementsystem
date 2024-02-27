@@ -1,14 +1,8 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
 package com.school.schoolmanagement.gui;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.*;
-
-import org.apache.commons.collections4.iterators.LoopingListIterator;
 
 import com.school.schoolmanagement.bus.CourseBUS;
 import com.school.schoolmanagement.bus.PersonBUS;
@@ -21,7 +15,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigDecimal;
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
