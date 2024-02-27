@@ -24,15 +24,14 @@ public class OnsiteCourseDAL {
     private static OnsiteCourseModel createOnsiteCourse(ResultSet rs) {
         try {
             int id = rs.getInt("CourseID");
-            //
-            // String title = rs.getString("Title");
-            // int credits = rs.getInt("Credit");
-            // int departmentID = rs.getInt("DepartmentID");
+            String title = rs.getString("Title");
+            int credits = rs.getInt("Credits");
+            int departmentID = rs.getInt("DepartmentID");
 
             String location = rs.getString("Location");
             String days = rs.getString("Days");
             Time time = rs.getTime("Time");
-            return new OnsiteCourseModel(id, null, 0, 0, location, days, time);
+            return new OnsiteCourseModel(id, title, credits, departmentID, location, days, time);
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -43,7 +42,7 @@ public class OnsiteCourseDAL {
     public ArrayList<OnsiteCourseModel> readDB() {
         ArrayList<OnsiteCourseModel> onsiteCourseList = new ArrayList<>();
         try (
-                ResultSet rs = DatabaseConnect.executeQuery("SELECT * FROM OnsiteCourse")) {
+                ResultSet rs = DatabaseConnect.executeQuery("SELECT * FROM OnsiteCourse, Course Where OnsiteCourse.CourseID = Course.CourseID")) {
             while (rs.next()) {
                 OnsiteCourseModel OnsiteCourseModel = createOnsiteCourse(rs);
                 onsiteCourseList.add(OnsiteCourseModel);

@@ -34,8 +34,6 @@ public class CourseInstructorManagement extends JPanel {
                         }
         );
 
-        txtFirstName.setEditable(false);
-        txtLastName.setEditable(false);
         txtUrl.setEditable(false);
         txtDays.setEditable(false);
         txtLocation.setEditable(false);
@@ -44,35 +42,12 @@ public class CourseInstructorManagement extends JPanel {
 //        Add padding for panel
         setBorder(new EmptyBorder(10, 10, 10 ,10));
 
-        //        combo box person ID action listener
-        cbPersonId.addActionListener(e -> {
-            try {
-                int selectedItem = Integer.parseInt(cbPersonId.getSelectedItem().toString());
-
-                for (PersonModel person : PersonBUS.getInstance().getAllModels()) {
-                    if (person.getPersonID() == selectedItem) {
-                        txtFirstName.setText(person.getFirstName());
-                        txtLastName.setText(person.getLastName());
-                    }
-                }
-            } catch (NumberFormatException ex) {
-                txtFirstName.setText("");
-                txtLastName.setText("");
-                ex.printStackTrace();
-            }
-        });
-
         //        combo box CourseOnlineId action listener
         cbCouseOnlineId.addActionListener(e -> {
             try {
-                int selectedItem = Integer.parseInt(cbCouseOnlineId.getSelectedItem().toString());
-
-                for (OnlineCourseModel course : OnlineCourseBUS.getInstance().getAllModels()) {
-                    if (course.getId() == selectedItem) {
-                        txtUrl.setText(course.getUrl());
-                    }
-                }
-            } catch (NumberFormatException ex) {
+                OnlineCourseModel selectedItem = (OnlineCourseModel) cbCouseOnlineId.getSelectedItem();
+                txtUrl.setText(selectedItem.getUrl());
+            } catch (ClassCastException ex) {
                 txtUrl.setText("");
                 ex.printStackTrace();
             }
@@ -81,16 +56,12 @@ public class CourseInstructorManagement extends JPanel {
         //        combo box CourseOnsiteId action listener
         cbCourseOnsiteId.addActionListener(e -> {
             try {
-                int selectedItem = Integer.parseInt(cbCourseOnsiteId.getSelectedItem().toString());
+                OnsiteCourseModel selectedItem = (OnsiteCourseModel) cbCourseOnsiteId.getSelectedItem();
 
-                for (OnsiteCourseModel course : OnsiteCourseBUS.getInstance().getAllModels()) {
-                    if (course.getId() == selectedItem) {
-                        txtLocation.setText(course.getLocation());
-                        txtDays.setText(course.getDays());
-                        txtTime.setText(course.getTime().toString());
-                    }
-                }
-            } catch (NumberFormatException ex) {
+                txtLocation.setText(selectedItem.getLocation());
+                txtDays.setText(selectedItem.getDays());
+                txtTime.setText(selectedItem.getTime().toString());
+            } catch (ClassCastException ex) {
                 txtLocation.setText("");
                 txtDays.setText("");
                 txtTime.setText("");
@@ -109,17 +80,11 @@ public class CourseInstructorManagement extends JPanel {
                     int personId = (int)tbList.getValueAt(selectedRow, 2);
 
 //                    Display person detail into text field
-                    for (PersonModel person : PersonBUS.getInstance().getAllModels()) {
-                        if (person.getPersonID() == personId) {
-                            txtFirstName.setText(person.getFirstName());
-                            txtLastName.setText(person.getLastName());
-//                            Set combo box selected index correspond to selected record
-                            for (int i = 1; i < cbPersonId.getItemCount(); i++) {
-                                if (Integer.parseInt(cbPersonId.getItemAt(i).toString()) == person.getPersonID()) {
-                                    cbPersonId.setSelectedIndex(i);
-                                    break;
-                                }
-                            }
+                    for (int i = 1; i < cbPersonId.getItemCount(); i++) {
+                        PersonModel temp = (PersonModel) cbPersonId.getItemAt(i);
+                        if (temp.getPersonID() == personId) {
+                            cbPersonId.setSelectedIndex(i);
+                            break;
                         }
                     }
 
@@ -133,7 +98,8 @@ public class CourseInstructorManagement extends JPanel {
                             txtTime.setText("");
 //                            Set combo box selected index correspond to selected record
                             for (int i = 1; i < cbCouseOnlineId.getItemCount(); i++) {
-                                if (Integer.parseInt(cbCouseOnlineId.getItemAt(i).toString()) == course.getId()) {
+                                OnlineCourseModel temp = (OnlineCourseModel) cbCouseOnlineId.getItemAt(i);
+                                if (temp.getId() == course.getId()) {
                                     cbCouseOnlineId.setSelectedIndex(i);
                                     break;
                                 }
@@ -151,7 +117,8 @@ public class CourseInstructorManagement extends JPanel {
                             cbCouseOnlineId.setSelectedIndex(0);
 //                            Set combo box selected index correspond to selected record
                             for (int i = 1; i < cbCourseOnsiteId.getItemCount(); i++) {
-                                if (Integer.parseInt(cbCourseOnsiteId.getItemAt(i).toString()) == course.getId()) {
+                                OnsiteCourseModel temp = (OnsiteCourseModel) cbCourseOnsiteId.getItemAt(i);
+                                if (temp.getId() == course.getId()) {
                                     cbCourseOnsiteId.setSelectedIndex(i);
                                     break;
                                 }
@@ -211,7 +178,8 @@ public class CourseInstructorManagement extends JPanel {
         btnAssign.addActionListener(e -> {
 //            Check if user choose an instructor
             if (cbPersonId.getSelectedIndex() != 0) {
-                int perSonId = Integer.parseInt(Objects.requireNonNull(cbPersonId.getSelectedItem()).toString());
+                PersonModel person = (PersonModel) cbPersonId.getSelectedItem();
+                int perSonId = person.getPersonID();
 //                Chech if user choose a course
                 if (cbCourseOnsiteId.getSelectedIndex() == 0 && cbCouseOnlineId.getSelectedIndex() == 0) {
                     JOptionPane.showMessageDialog(null, "Please choose a course", "Attention",
@@ -219,28 +187,28 @@ public class CourseInstructorManagement extends JPanel {
                     return;
                 }
                 if (cbCourseOnsiteId.getSelectedIndex() != 0 && cbCouseOnlineId.getSelectedIndex() != 0) {
-                    int courseOnlineId = Integer.parseInt(Objects.requireNonNull(cbCouseOnlineId.getSelectedItem()).toString());
-                    int courseOnSiteId = Integer.parseInt(Objects.requireNonNull(cbCourseOnsiteId.getSelectedItem()).toString());
-                    int resultOnline = CourseInstructorBUS.getInstance().addModel(new CourseInstructorModel(courseOnlineId, perSonId));
-                    int resultOnSite = CourseInstructorBUS.getInstance().addModel(new CourseInstructorModel(courseOnSiteId, perSonId));
+                    OnlineCourseModel onlineCourse = (OnlineCourseModel) cbCouseOnlineId.getSelectedItem();
+                    OnsiteCourseModel onsiteCourse = (OnsiteCourseModel) cbCourseOnsiteId.getSelectedItem();
+                    int resultOnline = CourseInstructorBUS.getInstance().addModel(new CourseInstructorModel(onlineCourse.getId(), perSonId));
+                    int resultOnSite = CourseInstructorBUS.getInstance().addModel(new CourseInstructorModel(onsiteCourse.getId(), perSonId));
 
                     if (resultOnline == 1) {
                         JOptionPane.showMessageDialog(null, "Add successfully for online course");
                         tbList.clearSelection();
                         showListCourseInstructor();
                     } else {
-                        JOptionPane.showMessageDialog(null, "Add failed");
+                        JOptionPane.showMessageDialog(null, "Add failed for online course");
                     }
                     if (resultOnSite == 1) {
                         JOptionPane.showMessageDialog(null, "Add successfully for onsite course");
                         tbList.clearSelection();
                         showListCourseInstructor();
                     } else {
-                        JOptionPane.showMessageDialog(null, "Add failed");
+                        JOptionPane.showMessageDialog(null, "Add failed for onsite course");
                     }
                 } else if (cbCourseOnsiteId.getSelectedIndex() != 0) {
-                    int courseOnSiteId = Integer.parseInt(Objects.requireNonNull(cbCourseOnsiteId.getSelectedItem()).toString());
-                    if (CourseInstructorBUS.getInstance().addModel(new CourseInstructorModel(courseOnSiteId, perSonId)) == 1) {
+                    OnsiteCourseModel onsiteCourse = (OnsiteCourseModel) cbCouseOnlineId.getSelectedItem();
+                    if (CourseInstructorBUS.getInstance().addModel(new CourseInstructorModel(onsiteCourse.getId(), perSonId)) == 1) {
                         JOptionPane.showMessageDialog(null, "Add successfully");
                         tbList.clearSelection();
                         showListCourseInstructor();
@@ -248,8 +216,8 @@ public class CourseInstructorManagement extends JPanel {
                         JOptionPane.showMessageDialog(null, "Add failed");
                     }
                 } else {
-                    int courseOnlineId = Integer.parseInt(Objects.requireNonNull(cbCouseOnlineId.getSelectedItem()).toString());
-                    if (CourseInstructorBUS.getInstance().addModel(new CourseInstructorModel(courseOnlineId, perSonId)) == 1) {
+                    OnlineCourseModel onlineCourse = (OnlineCourseModel) cbCouseOnlineId.getSelectedItem();
+                    if (CourseInstructorBUS.getInstance().addModel(new CourseInstructorModel(onlineCourse.getId(), perSonId)) == 1) {
                         JOptionPane.showMessageDialog(null, "Add successfully");
                         tbList.clearSelection();
                         showListCourseInstructor();
@@ -282,6 +250,13 @@ public class CourseInstructorManagement extends JPanel {
                 JOptionPane.showMessageDialog(null, "Delete failed");
             }
         });
+
+        showListCourseInstructor();
+        loadDataComboBox();
+
+        cbPersonId.setSelectedIndex(0);
+        cbCourseOnsiteId.setSelectedIndex(0);
+        cbCouseOnlineId.setSelectedIndex(0);
     }
 
     private void showListCourseInstructor() {
@@ -320,20 +295,20 @@ public class CourseInstructorManagement extends JPanel {
         cbCourseOnsiteId.addItem("");
 //        Data for combo box person
         for (PersonModel person : PersonBUS.getInstance().getAllModels()) {
-            cbPersonId.addItem(String.valueOf(person.getPersonID()));
+            cbPersonId.addItem(person);
         }
 
 //        Data for combo box online course
-        for (CourseModel courseOnline : OnlineCourseBUS.getInstance().getAllModels()) {
-            cbCouseOnlineId.addItem(String.valueOf(courseOnline.getId()));
+        for (OnlineCourseModel courseOnline : OnlineCourseBUS.getInstance().getAllModels()) {
+            cbCouseOnlineId.addItem(courseOnline);
         }
 
 //        Data for combo box onsite course
-        for (CourseModel courseOnSite : OnsiteCourseBUS.getInstance().getAllModels()) {
-            cbCourseOnsiteId.addItem(String.valueOf(courseOnSite.getId()));
+        for (OnsiteCourseModel courseOnSite : OnsiteCourseBUS.getInstance().getAllModels()) {
+            cbCourseOnsiteId.addItem(courseOnSite);
         }
     }
-    
+
     private void initComponents() {
 
         panelHeader = new JPanel();
@@ -341,10 +316,6 @@ public class CourseInstructorManagement extends JPanel {
         panelSearch = new JPanel();
         labelPersonID = new JLabel();
         cbPersonId = new JComboBox<>();
-        labelLastName = new JLabel();
-        txtLastName = new JTextField();
-        labelFirstName = new JLabel();
-        txtFirstName = new JTextField();
         panelOnlineCourse = new JPanel();
         labelCourseID = new JLabel();
         cbCouseOnlineId = new JComboBox<>();
@@ -374,31 +345,19 @@ public class CourseInstructorManagement extends JPanel {
         panelPerson.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         panelPerson.setLayout(new FlowLayout(FlowLayout.LEFT));
 
-        labelPersonID.setText("Person ID");
+        labelPersonID.setText("Person");
         panelPerson.add(labelPersonID);
-        
+
         panelPerson.add(cbPersonId);
-
-        labelLastName.setText("Last Name");
-        panelPerson.add(labelLastName);
-
-        txtLastName.setPreferredSize(new Dimension(180, 22));
-        panelPerson.add(txtLastName);
-
-        labelFirstName.setText("First Name");
-        panelPerson.add(labelFirstName);
-
-        txtFirstName.setPreferredSize(new Dimension(180, 22));
-        panelPerson.add(txtFirstName);
 
         panelHeader.add(panelPerson);
 
         panelOnlineCourse.setBorder(BorderFactory.createTitledBorder("Online Course"));
         panelOnlineCourse.setLayout(new FlowLayout(FlowLayout.LEFT));
 
-        labelCourseID.setText("Course ID");
+        labelCourseID.setText("Course online title");
         panelOnlineCourse.add(labelCourseID);
-        
+
         panelOnlineCourse.add(cbCouseOnlineId);
 
         labelURL.setText("URL");
@@ -412,9 +371,9 @@ public class CourseInstructorManagement extends JPanel {
         panelOnsiteCourse.setBorder(BorderFactory.createTitledBorder("Onsite Course"));
         panelOnsiteCourse.setLayout(new FlowLayout(FlowLayout.LEFT));
 
-        labelOnsiteCourseID.setText("Course ID");
+        labelOnsiteCourseID.setText("Course onsite title");
         panelOnsiteCourse.add(labelOnsiteCourseID);
-        
+
         panelOnsiteCourse.add(cbCourseOnsiteId);
 
         labelLocation.setText("Location");
@@ -459,21 +418,14 @@ public class CourseInstructorManagement extends JPanel {
         scrollPane.setViewportView(tbList);
 
         add(scrollPane, BorderLayout.CENTER);
-
-        showListCourseInstructor();
-        loadDataComboBox();
-
-        cbPersonId.setSelectedIndex(0);
-        cbCourseOnsiteId.setSelectedIndex(0);
-        cbCouseOnlineId.setSelectedIndex(0);
     }
 
     private JButton btnSearch;
     private JButton btnAssign;
     private JButton buttonNoAssign;
-    private JComboBox<String> cbCouseOnlineId;
-    private JComboBox<String> cbCourseOnsiteId;
-    private JComboBox<String> cbPersonId;
+    private JComboBox<Object> cbCouseOnlineId;
+    private JComboBox<Object> cbCourseOnsiteId;
+    private JComboBox<Object> cbPersonId;
     private JPanel panelHeader;
     private JPanel panelPerson;
     private JPanel panelSearch;
@@ -481,8 +433,6 @@ public class CourseInstructorManagement extends JPanel {
     private JPanel panelOnsiteCourse;
     private JLabel labelCourseID;
     private JLabel labelDay;
-    private JLabel labelFirstName;
-    private JLabel labelLastName;
     private JLabel labelLocation;
     private JLabel labelOnsiteCourseID;
     private JLabel labelPersonID;
@@ -493,8 +443,6 @@ public class CourseInstructorManagement extends JPanel {
     private JTable tbList;
     private JTextField txtSearch;
     private JTextField txtDays;
-    private JTextField txtFirstName;
-    private JTextField txtLastName;
     private JTextField txtLocation;
     private JTextField txtTime;
     private JTextField txtUrl;

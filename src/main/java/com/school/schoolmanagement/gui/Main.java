@@ -1,10 +1,8 @@
 package com.school.schoolmanagement.gui;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.UIManager;
-import javax.swing.border.EmptyBorder;
+import javax.swing.*;
 
 public class Main extends javax.swing.JFrame {
     private static Main instance;
@@ -24,8 +22,12 @@ public class Main extends javax.swing.JFrame {
         initComponents();
     }
     private void initComponents() {
+        panelMenu = new JPanel();
+        panelMenu.setBorder(BorderFactory.createLineBorder(Color.black));
 
         panelButton = new javax.swing.JPanel();
+        panelButton.setLayout(new GridLayout(3,1, 0,5));
+
         buttonCourse = new javax.swing.JButton();
         buttonCourseInstructor = new javax.swing.JButton();
         buttonStudentGrade = new javax.swing.JButton();
@@ -40,13 +42,32 @@ public class Main extends javax.swing.JFrame {
         buttonCourseInstructor.addActionListener(changePanelCourseInstructor);
         panelButton.add(buttonCourseInstructor);
 
-        buttonStudentGrade.setText("Studen Grade");
+        buttonStudentGrade.setText("Student Grade");
         buttonStudentGrade.addActionListener(changePanelGrade);
         panelButton.add(buttonStudentGrade);
 
+        panelMenu.setLayout(new BoxLayout(panelMenu, BoxLayout.Y_AXIS));
+        panelMenu.add(Box.createVerticalGlue());
+        panelMenu.add(panelButton);
+        panelMenu.add(Box.createVerticalGlue());
+
+        //        Set width and height of button
+        for (Object btn : panelButton.getComponents()) {
+            if (btn instanceof JButton) {
+                ((JButton) btn).setPreferredSize(new Dimension(150,10));
+                ((JButton) btn).setBackground(GlobalColor.getPrimaryColor());
+                ((JButton) btn).setContentAreaFilled(false);
+                ((JButton) btn).setOpaque(true);
+            }
+        }
+
+        // Set color for panel menu
+        panelMenu.setBackground(GlobalColor.getComplementaryColor());
+
         CourseManagement courseManagement = new CourseManagement();
-        getContentPane().add(courseManagement, BorderLayout.CENTER);
-        getContentPane().add(panelButton, java.awt.BorderLayout.PAGE_END);
+        setLayout(new BorderLayout());
+        add(panelMenu, BorderLayout.WEST);
+        add(courseManagement, BorderLayout.CENTER);
 
         pack();
         setLocationRelativeTo(null);
@@ -65,54 +86,43 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JButton buttonCourseInstructor;
     private javax.swing.JButton buttonStudentGrade;
     private javax.swing.JPanel panelButton;
+    private javax.swing.JPanel panelMenu;
 
-    private ActionListener changePanelCourseInstructor = new ActionListener() {
+    private ActionListener changePanelCourseInstructor = arg0 -> {
+        CourseInstructorManagement courseInstructorManagement = new CourseInstructorManagement();
+        Container contentPane = Main.getInstance().getContentPane();
+        Component centerComponent = ((BorderLayout) contentPane.getLayout()).getLayoutComponent(BorderLayout.CENTER);
+        Main.getInstance().remove(centerComponent);
+        Main.getInstance().revalidate();
+        Main.getInstance().repaint();
 
-        @Override
-        public void actionPerformed(ActionEvent arg0) {
-            CourseInstructorManagement courseInstructorManagement = new CourseInstructorManagement(); 
-            Container contentPane = Main.getInstance().getContentPane();
-            Component centerComponent = ((BorderLayout) contentPane.getLayout()).getLayoutComponent(BorderLayout.CENTER);
-            Main.getInstance().remove(centerComponent);
-            Main.getInstance().revalidate();
-            Main.getInstance().repaint();
-
-            Main.getInstance().getContentPane().add(courseInstructorManagement, BorderLayout.CENTER);
-            Main.getInstance().revalidate();
-            Main.getInstance().repaint();
-        }
+        Main.getInstance().getContentPane().add(courseInstructorManagement, BorderLayout.CENTER);
+        Main.getInstance().revalidate();
+        Main.getInstance().repaint();
     };
-    private ActionListener changePanelCourse = new ActionListener() {
+    private ActionListener changePanelCourse = arg0 -> {
+        CourseManagement courseManagement = new CourseManagement();
+        Container contentPane = Main.getInstance().getContentPane();
+        Component centerComponent = ((BorderLayout) contentPane.getLayout()).getLayoutComponent(BorderLayout.CENTER);
+        Main.getInstance().remove(centerComponent);
+        Main.getInstance().revalidate();
+        Main.getInstance().repaint();
 
-        @Override
-        public void actionPerformed(ActionEvent arg0) {
-            CourseManagement courseManagement = new CourseManagement();
-            Container contentPane = Main.getInstance().getContentPane();
-            Component centerComponent = ((BorderLayout) contentPane.getLayout()).getLayoutComponent(BorderLayout.CENTER);
-            Main.getInstance().remove(centerComponent);
-            Main.getInstance().revalidate();
-            Main.getInstance().repaint();
-
-            Main.getInstance().getContentPane().add(courseManagement, BorderLayout.CENTER);
-            Main.getInstance().revalidate();
-            Main.getInstance().repaint();
-        }
+        Main.getInstance().getContentPane().add(courseManagement, BorderLayout.CENTER);
+        Main.getInstance().revalidate();
+        Main.getInstance().repaint();
     };
-    private ActionListener changePanelGrade = new ActionListener() {
+    private ActionListener changePanelGrade = arg0 -> {
+        StudentGrade studentGrade = new StudentGrade();
+        Container contentPane = Main.getInstance().getContentPane();
+        Component centerComponent = ((BorderLayout) contentPane.getLayout()).getLayoutComponent(BorderLayout.CENTER);
+        Main.getInstance().remove(centerComponent);
+        Main.getInstance().revalidate();
+        Main.getInstance().repaint();
 
-        @Override
-        public void actionPerformed(ActionEvent arg0) {
-            StudentGrade studentGrade = new StudentGrade();
-            Container contentPane = Main.getInstance().getContentPane();
-            Component centerComponent = ((BorderLayout) contentPane.getLayout()).getLayoutComponent(BorderLayout.CENTER);
-            Main.getInstance().remove(centerComponent);
-            Main.getInstance().revalidate();
-            Main.getInstance().repaint();
-
-            Main.getInstance().getContentPane().add(studentGrade, BorderLayout.CENTER);
-            Main.getInstance().revalidate();
-            Main.getInstance().repaint();
-        }
+        Main.getInstance().getContentPane().add(studentGrade, BorderLayout.CENTER);
+        Main.getInstance().revalidate();
+        Main.getInstance().repaint();
     };
     
 }

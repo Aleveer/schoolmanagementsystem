@@ -23,10 +23,12 @@ public class OnlineCourseDAL {
     private static OnlineCourseModel createOnlineCourse(ResultSet rs) {
         try {
             int id = rs.getInt("CourseID");
-
+            String title = rs.getString("Title");
             String url = rs.getString("url");
+            int credit = rs.getInt("Credits");
+            int departmentID = rs.getInt("DepartmentID");
 
-            return new OnlineCourseModel(id, null, 0, 0, url);
+            return new OnlineCourseModel(id, title, credit, departmentID, url);
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -37,7 +39,7 @@ public class OnlineCourseDAL {
     public ArrayList<OnlineCourseModel> readDB() {
         ArrayList<OnlineCourseModel> onlineCourseList = new ArrayList<>();
         try (
-                ResultSet rs = DatabaseConnect.executeQuery("SELECT * FROM OnlineCourse")) {
+                ResultSet rs = DatabaseConnect.executeQuery("SELECT * FROM OnlineCourse, Course Where OnlineCourse.CourseID = Course.CourseID")) {
             while (rs.next()) {
                 OnlineCourseModel OnlineCourseModel = createOnlineCourse(rs);
                 onlineCourseList.add(OnlineCourseModel);

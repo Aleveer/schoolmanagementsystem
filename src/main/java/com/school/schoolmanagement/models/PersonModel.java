@@ -57,8 +57,7 @@ public class PersonModel {
 
     @Override
     public String toString() {
-        return "PersonModel [personID=" + personID + ", lastName=" + lastName + ", firstName=" + firstName
-                + ", hireDate=" + hireDate + ", enrollmentDate=" + enrollmentDate + "]";
+        return firstName + " " + lastName;
     }
 
 

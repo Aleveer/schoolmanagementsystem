@@ -18,10 +18,4 @@ public class OnlineCourseModel extends CourseModel{
         this.url = url;
     }
 
-    @Override
-    public String toString() {
-        return "OnlineCourseModel{" +
-                "url='" + url + '\'' +
-                '}';
-    }
 }

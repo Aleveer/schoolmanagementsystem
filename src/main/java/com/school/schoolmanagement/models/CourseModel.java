@@ -48,11 +48,6 @@ public class CourseModel {
 
     @Override
     public String toString() {
-        return "CourseModel [id=" + id + ", title=" + title + ", credit=" + credit + ", departmentID=" + departmentID
-                + "]";
-    }
-
-    public static void main(String[] args) {
-        System.out.println("chao ban");
+        return title;
     }
 }
