@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.UIManager;
+import javax.swing.border.EmptyBorder;
 
 public class Main extends javax.swing.JFrame {
     private static Main instance;
@@ -48,6 +49,7 @@ public class Main extends javax.swing.JFrame {
         getContentPane().add(panelButton, java.awt.BorderLayout.PAGE_END);
 
         pack();
+        setLocationRelativeTo(null);
     }
     public static void main(String args[]) {
         

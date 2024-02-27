@@ -4,6 +4,7 @@ import com.school.schoolmanagement.bus.*;
 import com.school.schoolmanagement.models.*;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -40,12 +41,8 @@ public class CourseInstructorManagement extends JPanel {
         txtLocation.setEditable(false);
         txtTime.setEditable(false);
 
-        showListCourseInstructor();
-        loadDataComboBox();
-
-        cbPersonId.setSelectedIndex(0);
-        cbCourseOnsiteId.setSelectedIndex(0);
-        cbCouseOnlineId.setSelectedIndex(0);
+//        Add padding for panel
+        setBorder(new EmptyBorder(10, 10, 10 ,10));
 
         //        combo box person ID action listener
         cbPersonId.addActionListener(e -> {
@@ -462,6 +459,13 @@ public class CourseInstructorManagement extends JPanel {
         scrollPane.setViewportView(tbList);
 
         add(scrollPane, BorderLayout.CENTER);
+
+        showListCourseInstructor();
+        loadDataComboBox();
+
+        cbPersonId.setSelectedIndex(0);
+        cbCourseOnsiteId.setSelectedIndex(0);
+        cbCouseOnlineId.setSelectedIndex(0);
     }
 
     private JButton btnSearch;

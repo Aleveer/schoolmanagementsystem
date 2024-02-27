@@ -5,6 +5,7 @@
 package com.school.schoolmanagement.gui;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.table.*;
 
 import com.school.schoolmanagement.bus.PersonBUS;
@@ -40,6 +41,7 @@ public class StudentGrade extends JPanel {
      */
     public StudentGrade() {
         initComponents();
+        setBorder(new EmptyBorder(10, 10, 10, 10));
     }
 
     /**
