@@ -1,5 +1,6 @@
 package com.school.schoolmanagement.bus;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -39,6 +40,15 @@ public class PersonBUS {
             }
         }
         return null;
+    }
+
+    public int getMax() {
+        refresh();
+        int count = 0;
+        for(PersonModel person : personList) {
+            count++;
+        }
+        return count + 1;
     }
 
     public int addModel(PersonModel PersonModel) {
@@ -90,31 +100,38 @@ public class PersonBUS {
 
     }
 
-    private boolean checkFilter(PersonModel PersonModel, String value, String[] columns) {
+    private boolean checkFilter(PersonModel personModel, String value, String[] columns) {
         for (String column : columns) {
-            switch (column.toLowerCase()) {
+            switch (column) {
+                case "LastName":
+                    if (personModel.getLastName().toLowerCase().contains(value.toLowerCase())) {
+                        return true;
+                    }
+                    break;
+                case "FirstName":
+                    if (personModel.getFirstName().toLowerCase().contains(value.toLowerCase())) {
+                        return true;
+                    }
+                    break;
                 case "PersonID":
-                    if (Integer.parseInt(value) == PersonModel.getPersonID()) {
-                        return true;
-                    }
-                    break;
-                case "Lastname":
-                    if (PersonModel.getLastName().toLowerCase().contains(value.toLowerCase())) {
-                        return true;
-                    }
-                    break;
-                case "Firstname":
-                    if (PersonModel.getFirstName().toLowerCase().contains(value.toLowerCase())) {
-                        return true;
+                    try {
+                        int intValue = Integer.parseInt(value);
+                        if (intValue == personModel.getPersonID()) {
+                            return true;
+                        }
+                    } catch (NumberFormatException e) {
+                        // Ignore if value cannot be parsed to integer
                     }
                     break;
                 case "HireDate":
-                    if (value.equals(PersonModel.getHireDate().toString())) {
+                    if (value.equals(String.valueOf(personModel.getHireDate()))) {
                         return true;
                     }
                     break;
                 case "EnrollmentDate":
-                    if (value.equals(PersonModel.getEnrollmentDate().toString())) {
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    String enrollmentDateAsString = (personModel.getEnrollmentDate() != null) ? dateFormat.format(personModel.getEnrollmentDate()) : "";
+                    if (value.equals(enrollmentDateAsString)) {
                         return true;
                     }
                     break;
@@ -124,5 +141,6 @@ public class PersonBUS {
         }
         return false;
     }
+
 
 }

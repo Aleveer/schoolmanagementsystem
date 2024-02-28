@@ -49,7 +49,8 @@ public class StudentGradeDAL {
     }
 
     public int insert(StudentGradeModel studentGrade) {
-        String insertSql = "INSERT INTO StudentGrade (EnrollmentID, CourseID, StudentID, Grade) VALUES (?, ?, ?)";
+        System.out.println(studentGrade);
+        String insertSql = "INSERT INTO StudentGrade (EnrollmentID, CourseID, StudentID, Grade) VALUES (?, ?, ?,?)";
         Object[] args = {
                 studentGrade.getEnrollmentID(),
                 studentGrade.getCourseID(),

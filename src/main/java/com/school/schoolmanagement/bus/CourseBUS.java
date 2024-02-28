@@ -48,6 +48,14 @@ public class CourseBUS {
             throw new IllegalArgumentException("error information, try again!!!");
         }
 
+        for (CourseModel course : courseList) {
+            if (course.getId() == CourseModel.getId()) {
+                throw new IllegalArgumentException("ID existed");
+            }
+            if (course.getTitle().equals(CourseModel.getTitle())) {
+                throw new IllegalArgumentException("Title existed");
+            }
+        }
         int result = CourseDAL.getInstance().insert(CourseModel);
         if (result > 0) {
             courseList.add(CourseModel);
@@ -132,6 +140,5 @@ public class CourseBUS {
         }
         return false;
     }
-
 
 }

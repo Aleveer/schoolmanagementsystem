@@ -6,7 +6,11 @@ import java.util.Collections;
 import java.util.List;
 
 import com.school.schoolmanagement.dal.StudentGradeDAL;
+import com.school.schoolmanagement.models.CourseModel;
+import com.school.schoolmanagement.models.PersonModel;
 import com.school.schoolmanagement.models.StudentGradeModel;
+
+import javax.swing.*;
 
 public class StudentGradeBUS {
     private final List<StudentGradeModel> studentGradeList = new ArrayList<>();
@@ -42,6 +46,15 @@ public class StudentGradeBUS {
         return null;
     }
 
+    public int getMax() {
+        refresh();
+        int count = 0;
+        for(StudentGradeModel person : studentGradeList) {
+            count++;
+        }
+        return count + 1;
+    }
+
     public int addModel(StudentGradeModel StudentGradeModel) {
         if (StudentGradeModel.getCourseID() <= 0
                 || StudentGradeModel.getEnrollmentID() <= 0
@@ -50,6 +63,11 @@ public class StudentGradeBUS {
             throw new IllegalArgumentException("Wrong information, try again!!!");
         }
 
+        for (StudentGradeModel student : studentGradeList) {
+            if (student.getCourseID() == student.getCourseID()) {
+                throw new IllegalArgumentException("Course has existed");
+            }
+        }
         int result = StudentGradeDAL.getInstance().insert(StudentGradeModel);
         if (result > 0) {
             studentGradeList.add(StudentGradeModel);

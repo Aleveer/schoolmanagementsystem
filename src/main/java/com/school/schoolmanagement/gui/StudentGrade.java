@@ -2,6 +2,8 @@ package com.school.schoolmanagement.gui;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.*;
 
 import com.school.schoolmanagement.bus.CourseBUS;
@@ -15,6 +17,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigDecimal;
+import java.sql.Date;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -47,7 +52,7 @@ public class StudentGrade extends JPanel {
         buttonAdd = new JButton();
         panelNewGrade = new JPanel();
         labelTitle = new JLabel();
-        txtTitle = new JTextField();
+        cbTitle = new JComboBox();
         labelGrade = new JLabel();
         txtGrade = new JTextField();
         buttonSave = new JButton();
@@ -62,6 +67,8 @@ public class StudentGrade extends JPanel {
 
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         setLayout(new BorderLayout());
+
+        txtPersonID.setEnabled(false);
 
         panelHeader.setPreferredSize(new Dimension(635, 180));
         panelHeader.setLayout(new GridLayout());
@@ -124,12 +131,16 @@ public class StudentGrade extends JPanel {
         gridBagConstraints.gridy = 0;
         panelNewGrade.add(labelTitle, gridBagConstraints);
 
-        txtTitle.setPreferredSize(new Dimension(120, 22));
-        txtTitle.setEditable(false);
+        cbTitle.setPreferredSize(new Dimension(120, 22));
+//        cbTitle.setEditable(false);
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
-        panelNewGrade.add(txtTitle, gridBagConstraints);
+        panelNewGrade.add(cbTitle, gridBagConstraints);
+        cbTitle.addItem("");
+        for(CourseModel course : CourseBUS.getInstance().getAllModels()) {
+            cbTitle.addItem(course.getTitle());
+        }
 
         labelGrade.setText("Grade");
         gridBagConstraints = new GridBagConstraints();
@@ -147,7 +158,8 @@ public class StudentGrade extends JPanel {
         buttonSave.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                saveGrade();
+                addGrade();
+                clearForm();
             }
         });
         gridBagConstraints = new GridBagConstraints();
@@ -159,39 +171,52 @@ public class StudentGrade extends JPanel {
         buttonAdd.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
+
                 addPerson();
             }
         });
 
         panelHeader.add(panelInfor);
         // TODO: Can't scroll, fix
-        String[] columnNames = { "EnrollmentID", "CourseID", "StudentID", "Grade" };
-        Object[][] data = new Object[studentGradeModels.size()][4];
-        System.out.println(" " + studentList.size());
+        String[] columnNames = { "EnrollmentID", "CourseID", "Course Name","StudentID", "Grade" };
+        Object[][] data = new Object[studentGradeModels.size()][5];
         for (int i = 0; i < studentGradeModels.size(); i++) {
             StudentGradeModel studentGradeModel = studentGradeModels.get(i);
             data[i][0] = studentGradeModel.getEnrollmentID();
             data[i][1] = studentGradeModel.getCourseID();
-            data[i][2] = studentGradeModel.getStudentID();
-            data[i][3] = studentGradeModel.getGrade();
-        }
-        DefaultTableModel model = new DefaultTableModel(data, columnNames);
-        tableGrade.setModel(model);
-        tableGrade.getSelectionModel().addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting()) {
-                handleRowSelection();
+            int courseID = studentGradeModel.getCourseID();
+
+            CourseModel course = CourseBUS.getInstance().getModelById(courseID);
+            if (course != null) {
+                data[i][2] = course.getTitle();
+            } else {
+                System.out.println("Invalid CourseID: " + courseID);
+                data[i][2] = "";
             }
-        });
-        tableGrade.setMaximumSize(new Dimension(60, 80));
-        tableGrade.setPreferredSize(new Dimension(100, 80));
+
+            data[i][3] = studentGradeModel.getStudentID();
+            data[i][4] = studentGradeModel.getGrade();
+        }
+        DefaultTableModel model = new DefaultTableModel(data, columnNames){
+//            @Override
+//            public boolean isCellEditable(int row, int column) {
+//                return false; // Make all cells not editable
+//            }
+        };
+        tableGrade.setModel(model);
+
+
+        tableGrade.setMaximumSize(new Dimension(60, 652));
+        tableGrade.setPreferredSize(new Dimension(100, 652));
         scrollPane1.setViewportView(tableGrade);
+
 
         panelHeader.add(scrollPane1);
 
         add(panelHeader, BorderLayout.NORTH);
 
         panelStudent.setLayout(new BorderLayout());
-        String[] columnNames1 = { "PersonID", "LastName", "FirstName", "EnrollmentDate" };
+        String[] columnNames1 = { "PersonID", "LastName", "FirstName", "HireDate" };
         Object[][] data1 = new Object[studentList.size()][4];
         for (int i = 0; i < studentList.size(); i++) {
             PersonModel student = studentList.get(i);
@@ -204,7 +229,12 @@ public class StudentGrade extends JPanel {
                 studentList.remove(i);
             }
         }
-        DefaultTableModel model1 = new DefaultTableModel(data1, columnNames1);
+        DefaultTableModel model1 = new DefaultTableModel(data1, columnNames1){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Make all cells not editable
+            }
+        };
         tableStudent.setModel(model1);
         tableStudent.getTableHeader().setReorderingAllowed(false);
         scrollPane2.setViewportView(tableStudent);
@@ -218,86 +248,173 @@ public class StudentGrade extends JPanel {
         buttonSearch.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                SearchFunc();
-            }
+searchFunc();            }
         });
         panelSearch.add(buttonSearch);
 
         panelStudent.add(panelSearch, BorderLayout.SOUTH);
 
         add(panelStudent, BorderLayout.PAGE_END);
+
     }// </editor-fold>//GEN-END:initComponents
 
-    private void handleRowSelection() {
-        int selectedRow = tableGrade.getSelectedRow();
+    public void clearForm() {
+        txtPersonID.setText("");
+        txtLastName.setText("");
+        txtFirstName.setText("");
+        cbTitle.setSelectedIndex(-1);
+        txtGrade.setText("");
+        showListGrade();
+    }
+
+    private void handleRowPersonSelection() {
+        int selectedRow = tableStudent.getSelectedRow();
         if (selectedRow != -1) {
-            Object enrollmentId = tableGrade.getValueAt(selectedRow, 0);
-            Object courseId = tableGrade.getValueAt(selectedRow, 1);
-            Object studentId = tableGrade.getValueAt(selectedRow, 2);
-            Object grade = tableGrade.getValueAt(selectedRow, 3);
-            int courseID = (int) tableGrade.getValueAt(selectedRow, 1);
-            CourseModel courseModel = CourseBUS.getInstance().getModelById(courseID);
-            txtTitle.setText(courseModel.getTitle().toString());
-            txtGrade.setText(grade.toString());
+            Object personID = tableStudent.getValueAt(selectedRow, 0);
+            Object lastName = tableStudent.getValueAt(selectedRow, 1);
+            Object firstName = tableStudent.getValueAt(selectedRow, 2);
+
+            txtPersonID.setText(personID.toString());
+            txtLastName.setText(lastName.toString());
+            txtFirstName.setText(firstName.toString());
+
+            cbTitle.setSelectedIndex(-1);
+            txtGrade.setText("");
+
+            List<StudentGradeModel> filteredGrades = studentGradeModels.stream()
+                    .filter(grade -> grade.getStudentID() == Integer.parseInt(personID.toString()))
+                    .collect(Collectors.toList());
+
+            // show list
+            DefaultTableModel gradeModel = (DefaultTableModel) tableGrade.getModel();
+            gradeModel.setRowCount(0); // Clear existing rows
+
+
+            for (StudentGradeModel gradeModel1 : filteredGrades) {
+                Object[] rowData = {gradeModel1.getEnrollmentID(), gradeModel1.getCourseID(),CourseBUS.getInstance().getModelById(gradeModel1.getCourseID()).getTitle(),
+                        gradeModel1.getStudentID(), gradeModel1.getGrade()};
+                gradeModel.addRow(rowData);
+            }
         }
+    }
+
+    public void addGrade() {
+        String title = cbTitle.getSelectedItem()+"";
+        int courseID = 0;
+        for(CourseModel course : CourseBUS.getInstance().getAllModels()) {
+            if(title.equals(course.getTitle())) {
+                courseID = course.getId();
+            }
+        }
+        int studentID = Integer.parseInt(txtPersonID.getText()+"");
+        BigDecimal grade = new BigDecimal(txtGrade.getText());
+
+        StudentGradeModel newStudentGrade = new StudentGradeModel(StudentGradeBUS.getInstance().getMax(), courseID,studentID,grade);
+        int result = StudentGradeBUS.getInstance().addModel(newStudentGrade);
+
+        if(result > 0){
+            JOptionPane.showMessageDialog(null,"Add grade successfully");
+        }else {
+            JOptionPane.showMessageDialog(null,"Add grade failed");
+        }
+        showListGrade();
     }
 
     private void saveGrade() {
-        // TODO: Refresh Table
-        int selectedRow = tableGrade.getSelectedRow();
-        if (selectedRow != -1) {
-            Object enrollmentId = tableGrade.getValueAt(selectedRow, 0);
-            int enrollmentID = (int) enrollmentId;
-            BigDecimal grade = new BigDecimal(txtGrade.getText().toString());
-            StudentGradeModel studentGradeModel = StudentGradeBUS.getInstance().getModelById(enrollmentID);
-            studentGradeModel.setGrade(grade);
-            StudentGradeBUS.getInstance().updateModel(studentGradeModel);
-            JOptionPane.showMessageDialog(null, "Saved successfully");
-            StudentGradeBUS.getInstance().refresh();
-        }
+        // TODO: Refresh Table(DONE)
+        tableGrade.getModel().addTableModelListener(new TableModelListener() {
+            @Override
+            public void tableChanged(TableModelEvent e) {
+                int selectedRow = tableGrade.getSelectedRow();
+                if(selectedRow != -1) {
+                    Object enrollmentID = tableGrade.getValueAt(selectedRow,0);
+                    Object courseID = tableGrade.getValueAt(selectedRow,1);
+                    Object studentID = tableGrade.getValueAt(selectedRow,2);
+                    Object grade = tableGrade.getValueAt(selectedRow,3);
+
+                    BigDecimal grade1 = new BigDecimal(grade.toString());
+                    StudentGradeModel studentGrade = new StudentGradeModel(Integer.parseInt(enrollmentID.toString()),Integer.parseInt(courseID.toString()),Integer.parseInt(studentID.toString()),grade1);
+
+                    System.out.println(studentGrade);
+                    int result = StudentGradeBUS.getInstance().updateModel(studentGrade);
+                    if(result > 0) {
+                        JOptionPane.showMessageDialog(null, "Save successful");
+                    }else {
+                        JOptionPane.showMessageDialog(null, "Save failed");
+                    }
+                    showListGrade();
+                }
+
+            }
+        });
     }
 
     private void addPerson() {
-        int personId = Integer.parseInt(txtPersonID.getText().toString());
-        List<PersonModel> people = PersonBUS.getInstance().searchModel(String.valueOf(personId),
-                new String[] { "PersonID" });
-        if (people.size() > 1) {
-            JOptionPane.showMessageDialog(null, "ID has existed, please use another ID.");
-            return;
-        }
-        String lastName = txtLastName.getText().toString();
-        String firstName = txtFirstName.getText().toString();
-        // TODO: Add enrollment date
-        PersonModel newStudent = new PersonModel(personId, lastName, firstName, null, null);
-        PersonBUS.getInstance().addModel(newStudent);
-        JOptionPane.showMessageDialog(null, "Added successfully");
-        PersonBUS.getInstance().refresh();
-        // TODO: refresh table
+        handleRowPersonSelection();
     }
 
-    private void SearchFunc() {
-        String searchField = txtSearch.getText().toString();
-        List<PersonModel> studentList1 = new ArrayList<>(studentList);
-        List<PersonModel> searchResults = studentList1.stream()
-                .filter(person -> person.getLastName().toLowerCase().contains(searchField.toLowerCase()) ||
-                        person.getFirstName().toLowerCase().contains(searchField.toLowerCase()) ||
-                        person.getPersonID() == Integer.parseInt(searchField)
-                // || person.getEnrollmentDate().equals(Date.valueOf(searchField)))
-                )
-                .collect(Collectors.toList());
+    public void showListGrade() {
+        StudentGradeBUS.getInstance().refresh();
+        DefaultTableModel model_table = (DefaultTableModel) tableGrade.getModel();
+        model_table.setRowCount(0);
 
-        Object[][] data2 = new Object[searchResults.size()][4];
-        for (int i = 0; i < searchResults.size(); i++) {
-            PersonModel student = searchResults.get(i);
-            data2[i][0] = student.getPersonID();
-            data2[i][1] = student.getLastName();
-            data2[i][2] = student.getFirstName();
-            data2[i][3] = student.getEnrollmentDate();
+        DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
+        renderer.setHorizontalAlignment(SwingConstants.CENTER);
+
+        for (StudentGradeModel grade : StudentGradeBUS.getInstance().getAllModels()) {
+            model_table.addRow(new Object[]{grade.getEnrollmentID(),grade.getCourseID(),CourseBUS.getInstance().getModelById(grade.getCourseID()).getTitle(),grade.getStudentID(),grade.getGrade()});
         }
-        String[] columnNames2 = { "PersonID", "LastName", "FirstName", "EnrollmentDate" };
-        DefaultTableModel model2 = new DefaultTableModel(data2, columnNames2);
-        tableStudent.setModel(model2);
     }
+
+    public void showListPerson() {
+        DefaultTableModel model_table = (DefaultTableModel) tableStudent.getModel();
+        model_table.setRowCount(0);
+
+        DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
+        renderer.setHorizontalAlignment(SwingConstants.CENTER);
+
+        for (PersonModel person : PersonBUS.getInstance().getAllModels()) {
+            if(person.getHireDate() == null) {
+                model_table.addRow(new Object[]{person.getPersonID(),person.getLastName(),person.getFirstName(),person.getEnrollmentDate()});
+            }
+        }
+    }
+
+
+
+    private void searchFunc() {
+        String searchField = txtSearch.getText().trim();
+        if (searchField.isEmpty()) {
+            showListPerson();
+        } else {
+            String[] columnNames = {"LastName", "FirstName", "PersonID", "EnrollmentDate"};
+            List<PersonModel> studentList1 = PersonBUS.getInstance().searchModel(searchField, columnNames);
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+            List<PersonModel> searchResults = studentList1.stream()
+                    .filter(person -> person.getLastName().toLowerCase().contains(searchField.toLowerCase()) ||
+                            person.getFirstName().toLowerCase().contains(searchField.toLowerCase()) ||
+                            (person.getEnrollmentDate() != null && dateFormat.format(person.getEnrollmentDate()).contains(searchField)) ||
+                            person.getPersonID() == Integer.parseInt(searchField))
+                    .toList();
+
+            Object[][] data2 = new Object[searchResults.size()][4];
+            for (int i = 0; i < searchResults.size(); i++) {
+                if (searchResults.get(i).getHireDate() == null) {
+                    PersonModel student = searchResults.get(i);
+                    data2[i][0] = student.getPersonID();
+                    data2[i][1] = student.getLastName();
+                    data2[i][2] = student.getFirstName();
+                    data2[i][3] = student.getEnrollmentDate();
+                }
+            }
+            String[] columnNames2 = {"PersonID", "LastName", "FirstName", "EnrollmentDate"};
+            DefaultTableModel model2 = new DefaultTableModel(data2, columnNames2);
+            tableStudent.setModel(model2);
+        }
+    }
+
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JButton buttonAdd;
@@ -323,6 +440,6 @@ public class StudentGrade extends JPanel {
     private JTextField txtLastName;
     private JTextField txtPersonID;
     private JTextField txtSearch;
-    private JTextField txtTitle;
+    private JComboBox cbTitle;
     // End of variables declaration//GEN-END:variables
 }

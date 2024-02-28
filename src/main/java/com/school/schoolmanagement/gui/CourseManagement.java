@@ -158,13 +158,11 @@ public class CourseManagement extends JPanel {
 
         panelInfor.add(labelDepartment, gridBagConstraints);
 
-        String[] arr = new String[departmentList.size()];
-        for (int i = 0; i < departmentList.size(); i++) {
-            DepartmentModel departmentModel = departmentList.get(i);
-            arr[i] = departmentModel.getName() + " id: " + departmentModel.getDepartmentID();
+
+        departmentComboBox.addItem("");
+        for(DepartmentModel department : DepartmentBUS.getInstance().getAllModels()) {
+            departmentComboBox.addItem(department.getName()+"");
         }
-        departmentComboBox
-                .setModel(new DefaultComboBoxModel<>(arr));
         departmentComboBox.setPreferredSize(new Dimension(220, 22));
 
         gridBagConstraints = new GridBagConstraints();
@@ -217,6 +215,7 @@ public class CourseManagement extends JPanel {
         panelButton.add(buttonAdd);
         buttonDelete.setText("Delete");
         panelButton.add(buttonDelete);
+        textFieldId.setEnabled(false);
 
         buttonUpdate.setText("Update");
         panelButton.add(buttonUpdate);
@@ -236,10 +235,10 @@ public class CourseManagement extends JPanel {
         textFieldSearch.setPreferredSize(new Dimension(170, 22));
 
         panelSearch.add(textFieldSearch);
-        comboBoxDepartment
-                .setModel(new DefaultComboBoxModel<>(arr));
-        comboBoxDepartment.setBorder(BorderFactory.createTitledBorder("Department"));
-        comboBoxDepartment.setPreferredSize(new Dimension(130, 43));
+        comboBoxDepartment.addItem("");
+        for(DepartmentModel department : DepartmentBUS.getInstance().getAllModels()) {
+            comboBoxDepartment.addItem(department.getName()+"");
+        }
 
         panelSearch.add(comboBoxDepartment);
 
@@ -281,38 +280,38 @@ public class CourseManagement extends JPanel {
         });
 
         table.setModel(new DefaultTableModel(
-                new Object[][] {
-                },
-                new String[] {
-                        "CourseID", "Title", "Credits", "DepartmentID", "Status"
-                }) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return column == getColumnCount();
-            }
-        }
+                               new Object[][] {
+                               },
+                               new String[] {
+                                       "CourseID", "Title", "Credits", "DepartmentID", "Status"
+                               }) {
+                           @Override
+                           public boolean isCellEditable(int row, int column) {
+                               return column == getColumnCount();
+                           }
+                       }
 
         );
 
         radioOnline.addActionListener(e -> {
             if (radioOnline.isSelected()) {
                 // Hiển thị các thành phần của A
-                 panel_online.setVisible(true);
-                 txtLocation.setText("");
-                 txtDays.setText("");
-                 txtTime.setText("");
-                 // Ẩn các thành phần của B
-                 panel_onSite.setVisible(false);
+                panel_online.setVisible(true);
+                txtLocation.setText("");
+                txtDays.setText("");
+                txtTime.setText("");
+                // Ẩn các thành phần của B
+                panel_onSite.setVisible(false);
             }
         });
 
         radioOnsite.addActionListener(e -> {
             if (radioOnsite.isSelected()) {
-                 // Hiển thị các thành phần của B
-                 panel_onSite.setVisible(true);
-                 txtURL.setText("");
-                 // Ẩn các thành phần của A
-                 panel_online.setVisible(false);
+                // Hiển thị các thành phần của B
+                panel_onSite.setVisible(true);
+                txtURL.setText("");
+                // Ẩn các thành phần của A
+                panel_online.setVisible(false);
             }
         });
 
@@ -324,7 +323,7 @@ public class CourseManagement extends JPanel {
         buttonRefresh.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // clearForm();
+                clearForm();
                 btnGroup.clearSelection();
                 showListCourse();
             }
@@ -348,7 +347,7 @@ public class CourseManagement extends JPanel {
                 deleteCourse(courseID);
                 showListCourse();
             }
-             clearForm();
+            clearForm();
         });
 
         table.getSelectionModel().addListSelectionListener(e -> {
@@ -380,7 +379,7 @@ public class CourseManagement extends JPanel {
                     int courseID = Integer.parseInt(textFieldId.getText());
                     String title = textFieldTitle.getText();
                     int credit = Integer.parseInt(textFieldCredit.getText());
-                    String departmentName = (String) comboBoxDepartment.getSelectedItem();
+                    String departmentName = (String) departmentComboBox.getSelectedItem();
                     int departmentID = 0;
                     for (DepartmentModel department : DepartmentBUS.getInstance().getAllModels()) {
                         if (departmentName.equals(department.getName())) {
@@ -405,15 +404,13 @@ public class CourseManagement extends JPanel {
                         String timeText = txtTime.getText();
                         SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
 
-                        Date parsedDate; // Change to java.util.Date
+                        java.util.Date parsedDate;  // Change to java.util.Date
                         try {
                             parsedDate = timeFormat.parse(timeText);
-                        } catch (java.text.ParseException e1) {
-                            // TODO Auto-generated catch block
-                            e1.printStackTrace();
+                        } catch (ParseException | java.text.ParseException e1) {
+                            throw new RuntimeException(e1);
                         }
-
-                        Time time = new Time(1); // Lỗi
+                        java.sql.Time time = new java.sql.Time(parsedDate.getTime());
 
                         CourseModel updateModel = new CourseModel(courseID, title, credit, departmentID);
                         OnsiteCourseModel updateOnsiteCourse = new OnsiteCourseModel(courseID, null, 0, 0,
@@ -432,56 +429,28 @@ public class CourseManagement extends JPanel {
                         table.clearSelection();
                     }
                 }
-                 clearForm();
+                clearForm();
             }
         });
 
-        buttonSearch.addActionListener(e -> {
-            String inputText = textFieldSearch.getText(); // Get the search text
-            String departmentSelected = comboBoxDepartment.getSelectedItem().toString();
-            int lastIndex = departmentSelected.lastIndexOf(" ");
-            int lastNumber = Integer.parseInt(departmentSelected.substring(lastIndex + 1));
-            List<CourseModel> courseSearchList;
-            // Search for courses based on the department ID
-            if (!departmentSelected.isEmpty()) {
-                courseSearchList = CourseBUS.getInstance().searchModel(String.valueOf(lastNumber),
-                        new String[] { "DepartmentID" });
-            } else {
-                courseSearchList = CourseBUS.getInstance().getAllModels();
-            }
+        buttonSearch.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String value = textFieldSearch.getText();
+                String departmentName = comboBoxDepartment.getSelectedItem()+"";
+                String status = comboBoxStatus.getSelectedItem()+"";
 
-            // Filter the search results based on the input text
-            List<CourseModel> filteredList = new ArrayList<>();
-            for (CourseModel course : courseSearchList) {
-                if (inputText.isEmpty() || // If the search text is empty, add all courses
-                        course.getId() == Integer.parseInt(inputText) || // Compare IDs
-                        course.getTitle().contains(inputText) || // Check if title contains the input text
-                        String.valueOf(course.getCredit()).contains(inputText)) { // Check if credit contains the
-                                                                                  // input text
-                    filteredList.add(course);
-                }
+                List<CourseModel> models = CourseBUS.getInstance().searchConditions(value,departmentName,status);
+                showSearchResult(models);
             }
-            // Prepare data for the table model
-            String[] columnNames1 = { "CourseID", "Title", "Credits", "DepartmentID" };
-            Object[][] data1 = new Object[filteredList.size()][4];
-            for (int i = 0; i < filteredList.size(); i++) {
-                CourseModel course = filteredList.get(i);
-                data1[i][0] = course.getId();
-                data1[i][1] = course.getTitle();
-                data1[i][2] = course.getCredit();
-                data1[i][3] = course.getDepartmentID();
-            }
-
-            // Set the table model
-            DefaultTableModel model1 = new DefaultTableModel(data1, columnNames1);
-            table.setModel(model1);
         });
-         showListCourse();
+        showListCourse();
     }
 
     public void showListCourse() {
         CourseBUS.getInstance().refresh();
         OnlineCourseBUS.getInstance().refresh();
+        OnsiteCourseBUS.getInstance().refresh();
         DefaultTableModel model_table = (DefaultTableModel) table.getModel();
         model_table.setRowCount(0);
 
@@ -510,102 +479,95 @@ public class CourseManagement extends JPanel {
         }
     }
 
-     public void clearForm() {
-         textFieldId.setText("");
-         textFieldTitle.setText("");
-         textFieldCredit.setText("");
-         comboBoxDepartment.setSelectedIndex(-1);
-         txtURL.setText("");
-         txtLocation.setText("");
-         txtDays.setText("");
-         txtTime.setText("");
-         textFieldSearch.setText("");
-         comboBoxDepartment.setSelectedItem("");
-         comboBoxStatus.setSelectedItem("");
-         txtLocation.setText("");
-         txtDays.setText("");
-         txtTime.setText("");
-         radioOnsite.setSelected(false);
-         panel_onSite.setVisible(false);
-         panel_online.setVisible(false);
-     }
+    public void clearForm() {
+        textFieldId.setText("");
+        textFieldTitle.setText("");
+        textFieldCredit.setText("");
+        departmentComboBox.setSelectedIndex(-1);
+        txtLocation.setText("");
+        txtDays.setText("");
+        txtTime.setText("");
+        textFieldSearch.setText("");
+        comboBoxDepartment.setSelectedItem("");
+        comboBoxStatus.setSelectedItem("");
+        txtLocation.setText("");
+        txtDays.setText("");
+        txtTime.setText("");
+        radioOnsite.setSelected(false);
+        panel_onSite.setVisible(false);
+        panel_online.setVisible(false);
+    }
 
     public void addCourse() {
-            int courseID = Integer.parseInt(textFieldId.getText());
-            for (int i = 0; i < courseList.size(); i++) {
-                if (courseID == courseList.get(i).getId()) {
-                    JOptionPane.showMessageDialog(null, "ID has existed, please use another id!");
-                    return;
-                }
-            }
-            String title = textFieldTitle.getText();
-            int credits = Integer.parseInt(textFieldCredit.getText());
-            String department = departmentComboBox.getSelectedItem().toString();
-            int lastIndex = department.lastIndexOf(" ");
-            int lastNumber = Integer.parseInt(department.substring(lastIndex + 1));
-            if (!radioOnline.isSelected() && !radioOnsite.isSelected()) {
-                JOptionPane.showMessageDialog(null, "Please choose course type (Online, onsite)");
-                return;
-            }
-            CourseBUS.getInstance().addModel(new CourseModel(courseID, title, credits, lastNumber));
-            CourseBUS.getInstance().refresh();
+        if (!radioOnline.isSelected() && !radioOnsite.isSelected()) {
+            JOptionPane.showMessageDialog(null, "Chọn hình thức khóa học(Online,onsite)");
+            return;
+        }
 
+        int CourseID = getRandom();
+        String title = textFieldTitle.getText();
+        int credits = Integer.parseInt(textFieldCredit.getText());
+        String departmentName = departmentComboBox.getSelectedItem() + "";
+        int departmentID = 0;
+        for(DepartmentModel department : DepartmentBUS.getInstance().getAllModels()) {
+            if(departmentName.equals(department.getName())) {
+                departmentID = department.getDepartmentID();
+            }
+        }
+        System.out.println(departmentID);
 
         if (radioOnline.isSelected()) {
-            String url = txtURL.getText() + "";
-            CourseModel newCourse = new CourseModel(courseID, title, credits,lastNumber);
-            OnlineCourseModel onlineCourse = new OnlineCourseModel(courseID, title, credits, lastNumber, url);
+            String url = txtURL.getText();
+            CourseModel newCourse = new CourseModel(CourseID, title, credits, departmentID);
+            OnlineCourseModel onlineCourse = new OnlineCourseModel(CourseID, title, credits, departmentID, url);
+            System.out.println(newCourse);
             int resultModel = CourseBUS.getInstance().addModel(newCourse);
             int newOnlineCourse = OnlineCourseBUS.getInstance().addModel(onlineCourse);
             if (resultModel == 1 && newOnlineCourse == 1) {
-            JOptionPane.showMessageDialog(null, "Add successfully");
+                JOptionPane.showMessageDialog(null, "Thêm thành công");
             } else {
-            JOptionPane.showMessageDialog(null, "Add failed");
+                JOptionPane.showMessageDialog(null, "Thêm thất bại");
             }
         } else if (radioOnsite.isSelected()) {
             String timeText = txtTime.getText();
-            
+
             String timeRegex = "([01]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]";
-            
+
             if (!timeText.matches(timeRegex)) {
-            JOptionPane.showMessageDialog(null, "Invalid time format");
-            return;
+                JOptionPane.showMessageDialog(null, "Invalid time format");
+                return;
             }
-            
+
             String[] timeParts = timeText.split(":");
             int hours = Integer.parseInt(timeParts[0]);
             int minutes = Integer.parseInt(timeParts[1]);
             int seconds = Integer.parseInt(timeParts[2]);
-            
-            if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59 || seconds < 0 ||
-            seconds > 59) {
-            JOptionPane.showMessageDialog(null, "Invalid time values. Please use valid hour, minute, and second values.");
-            return;
+
+            if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59 || seconds < 0 || seconds > 59) {
+                JOptionPane.showMessageDialog(null, "Invalid time values. Please use valid hour, minute, and second values.");
+                return;
             }
-            
+
             SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-            java.util.Date parsedDate; // Change to java.util.Date
-            
-            // try {
-            // parsedDate = timeFormat.parse(timeText);
-            // } catch (ParseException e) {
-            // throw new RuntimeException(e);
-            // }
-            
+            java.util.Date parsedDate;  // Change to java.util.Date
+
+            try {
+                parsedDate = timeFormat.parse(timeText);
+            } catch (ParseException | java.text.ParseException e) {
+                throw new RuntimeException(e);
+            }
+
             // Convert java.util.Date to java.sql.Time
-            java.sql.Time time = new Time(1);
-            
-            CourseModel newCourse = new CourseModel(courseID, title, credits,
-            lastNumber);
-            OnsiteCourseModel onsiteCourse = new OnsiteCourseModel(courseID,
-            textFieldTitle.getText(), Integer.parseInt(textFieldCredit.getText()),
-            lastNumber, txtLocation.getText(), txtDays.getText(), time);
+            java.sql.Time time = new java.sql.Time(parsedDate.getTime());
+
+            CourseModel newCourse = new CourseModel(CourseID, title, credits, departmentID);
+            OnsiteCourseModel onsiteCourse = new OnsiteCourseModel(CourseID, textFieldTitle.getText(), Integer.parseInt(textFieldCredit.getText()), departmentID, txtLocation.getText(), txtDays.getText(), time);
             int resultModel = CourseBUS.getInstance().addModel(newCourse);
             int newOnsiteCourse = OnsiteCourseBUS.getInstance().addModel(onsiteCourse);
             if (resultModel == 1 && newOnsiteCourse == 1) {
-            JOptionPane.showMessageDialog(null, "Add successfully");
+                JOptionPane.showMessageDialog(null, "Thêm thành công");
             } else {
-            JOptionPane.showMessageDialog(null, "Add failed");
+                JOptionPane.showMessageDialog(null, "Thêm thất bại");
             }
         }
         table.clearSelection();
@@ -661,6 +623,12 @@ public class CourseManagement extends JPanel {
             }
         }
     }
+
+    public int getRandom() {
+        Random rand = new Random();
+        return rand.nextInt(9999)+1;
+    }
+
 
     public void showSearchResult(List<CourseModel> search) {
         DefaultTableModel model = (DefaultTableModel) table.getModel();
