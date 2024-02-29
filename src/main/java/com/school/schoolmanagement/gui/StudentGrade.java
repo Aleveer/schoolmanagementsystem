@@ -189,13 +189,21 @@ public class StudentGrade extends JPanel {
                 int selectedRow = tableGrade.getSelectedRow();
                 Object enrollmentID = tableGrade.getValueAt(selectedRow,0);
                 Object courseID = tableGrade.getValueAt(selectedRow,1);
+                Object courseName = tableGrade.getValueAt(selectedRow,2);
                 Object studentID = tableGrade.getValueAt(selectedRow,3);
-                Object grade = tableGrade.getValueAt(selectedRow,4);
+                Object studentName = tableGrade.getValueAt(selectedRow,4);
+                Object grade = tableGrade.getValueAt(selectedRow,5);
+                BigDecimal grade1 = null;
+                try {
+                    grade1 = new BigDecimal(grade.toString());
+                    // Sử dụng giá trị BigDecimal ở đây nếu muốn
+                } catch (NumberFormatException exception) {
+                    // Xử lý lỗi chuyển đổi
+                    System.err.println("Lỗi chuyển đổi số: " + exception.getMessage());
+                }
 
-                BigDecimal grade1 = new BigDecimal(grade.toString());
                 StudentGradeModel studentGrade = new StudentGradeModel(Integer.parseInt(enrollmentID.toString()),Integer.parseInt(courseID.toString()),Integer.parseInt(studentID.toString()),grade1);
-
-                System.out.println(studentGrade);
+                System.out.println("test: "+studentGrade);
                 int result = StudentGradeBUS.getInstance().updateModel(studentGrade);
                 if(result > 0) {
                     JOptionPane.showMessageDialog(null, "Save successful");
@@ -212,13 +220,14 @@ public class StudentGrade extends JPanel {
 
         panelHeader.add(panelInfor);
         // TODO: Can't scroll, fix
-        String[] columnNames = { "EnrollmentID", "CourseID", "Course Name","StudentID", "Grade" };
-        Object[][] data = new Object[studentGradeModels.size()][5];
+        String[] columnNames = { "EnrollmentID", "CourseID", "Course Name","StudentID","Student Name", "Grade" };
+        Object[][] data = new Object[studentGradeModels.size()][6];
         for (int i = 0; i < studentGradeModels.size(); i++) {
             StudentGradeModel studentGradeModel = studentGradeModels.get(i);
             data[i][0] = studentGradeModel.getEnrollmentID();
             data[i][1] = studentGradeModel.getCourseID();
             int courseID = studentGradeModel.getCourseID();
+            int studentID = studentGradeModel.getStudentID();
 
             CourseModel course = CourseBUS.getInstance().getModelById(courseID);
             if (course != null) {
@@ -229,13 +238,21 @@ public class StudentGrade extends JPanel {
             }
 
             data[i][3] = studentGradeModel.getStudentID();
-            data[i][4] = studentGradeModel.getGrade();
+
+            PersonModel person = PersonBUS.getInstance().getModelById(studentID);
+            if (person != null) {
+                data[i][4] = person.getFirstName()+" "+person.getLastName();
+            } else {
+                System.out.println("Invalid studentID: " + courseID);
+                data[i][4] = "";
+            }
+            data[i][5] = studentGradeModel.getGrade();
         }
         DefaultTableModel model = new DefaultTableModel(data, columnNames){
             @Override
             public boolean isCellEditable(int row, int column) {
                 // Chỉ cho phép sửa cột điểm
-                return column == 4;
+                return column == 5;
             }
         };
         tableGrade.setModel(model);
@@ -251,7 +268,7 @@ public class StudentGrade extends JPanel {
         add(panelHeader, BorderLayout.NORTH);
 
         panelStudent.setLayout(new BorderLayout());
-        String[] columnNames1 = { "PersonID", "LastName", "FirstName", "HireDate" };
+        String[] columnNames1 = { "PersonID", "LastName", "FirstName", "EnrollmentDate" };
         Object[][] data1 = new Object[studentList.size()][4];
         for (int i = 0; i < studentList.size(); i++) {
             PersonModel student = studentList.get(i);
@@ -371,7 +388,7 @@ public class StudentGrade extends JPanel {
         renderer.setHorizontalAlignment(SwingConstants.CENTER);
 
         for (StudentGradeModel grade : StudentGradeBUS.getInstance().getAllModels()) {
-            model_table.addRow(new Object[]{grade.getEnrollmentID(),grade.getCourseID(),CourseBUS.getInstance().getModelById(grade.getCourseID()).getTitle(),grade.getStudentID(),grade.getGrade()});
+            model_table.addRow(new Object[]{grade.getEnrollmentID(),grade.getCourseID(),CourseBUS.getInstance().getModelById(grade.getCourseID()).getTitle(),grade.getStudentID(),PersonBUS.getInstance().getModelById(grade.getStudentID()).getFirstName()+" "+PersonBUS.getInstance().getModelById(grade.getStudentID()).getLastName(),grade.getGrade()});
         }
     }
 
