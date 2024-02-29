@@ -196,9 +196,7 @@ public class StudentGrade extends JPanel {
                 BigDecimal grade1 = null;
                 try {
                     grade1 = new BigDecimal(grade.toString());
-                    // Sử dụng giá trị BigDecimal ở đây nếu muốn
                 } catch (NumberFormatException exception) {
-                    // Xử lý lỗi chuyển đổi
                     System.err.println("Lỗi chuyển đổi số: " + exception.getMessage());
                 }
 
