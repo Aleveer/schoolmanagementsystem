@@ -64,7 +64,8 @@ public class StudentGradeBUS {
         }
 
         for (StudentGradeModel student : studentGradeList) {
-            if (student.getCourseID() == student.getCourseID()) {
+            if (student.getCourseID() == StudentGradeModel.getCourseID() &&
+                    student.getStudentID() == StudentGradeModel.getStudentID()) {
                 throw new IllegalArgumentException("Course has existed");
             }
         }
