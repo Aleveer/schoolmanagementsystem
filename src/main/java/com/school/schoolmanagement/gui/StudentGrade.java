@@ -2,6 +2,8 @@ package com.school.schoolmanagement.gui;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.CellEditorListener;
+import javax.swing.event.ChangeEvent;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.*;
@@ -16,6 +18,8 @@ import com.school.schoolmanagement.models.StudentGradeModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
@@ -124,6 +128,7 @@ public class StudentGrade extends JPanel {
         panelNewGrade.setBorder(BorderFactory.createTitledBorder("Grade"));
         panelNewGrade.setPreferredSize(new Dimension(200, 200));
         panelNewGrade.setLayout(new GridBagLayout());
+        panelNewGrade.setVisible(false);
 
         labelTitle.setText("Title");
         gridBagConstraints = new GridBagConstraints();
@@ -155,12 +160,9 @@ public class StudentGrade extends JPanel {
         panelNewGrade.add(txtGrade, gridBagConstraints);
 
         buttonSave.setText("Save");
-        buttonSave.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                addGrade();
-                clearForm();
-            }
+        buttonSave.addActionListener(arg0 -> {
+            addGrade();
+            clearForm();
         });
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 2;
@@ -168,11 +170,43 @@ public class StudentGrade extends JPanel {
         panelNewGrade.add(buttonSave, gridBagConstraints);
 
         panelInfor.add(panelNewGrade, BorderLayout.CENTER);
-        buttonAdd.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
+        buttonAdd.addActionListener(arg0 -> addPerson());
 
-                addPerson();
+//        Event listener for selecting table student and display on text box
+        tableStudent.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                int selectedRow = tableStudent.getSelectedRow();
+    //                Check if row is selected
+                if (selectedRow != -1) {
+                    handleRowPersonSelection();
+                }
+            }
+        });
+
+//        Event listener for change grade
+        tableGrade.getDefaultEditor(String.class).addCellEditorListener(new CellEditorListener() {
+            public void editingStopped(ChangeEvent e) {
+                int selectedRow = tableGrade.getSelectedRow();
+                Object enrollmentID = tableGrade.getValueAt(selectedRow,0);
+                Object courseID = tableGrade.getValueAt(selectedRow,1);
+                Object studentID = tableGrade.getValueAt(selectedRow,3);
+                Object grade = tableGrade.getValueAt(selectedRow,4);
+
+                BigDecimal grade1 = new BigDecimal(grade.toString());
+                StudentGradeModel studentGrade = new StudentGradeModel(Integer.parseInt(enrollmentID.toString()),Integer.parseInt(courseID.toString()),Integer.parseInt(studentID.toString()),grade1);
+
+                System.out.println(studentGrade);
+                int result = StudentGradeBUS.getInstance().updateModel(studentGrade);
+                if(result > 0) {
+                    JOptionPane.showMessageDialog(null, "Save successful");
+                }else {
+                    JOptionPane.showMessageDialog(null, "Save failed");
+                }
+                showListGrade();
+            }
+
+            public void editingCanceled(ChangeEvent e) {
+                System.out.println("Editing canceled");
             }
         });
 
@@ -198,10 +232,11 @@ public class StudentGrade extends JPanel {
             data[i][4] = studentGradeModel.getGrade();
         }
         DefaultTableModel model = new DefaultTableModel(data, columnNames){
-//            @Override
-//            public boolean isCellEditable(int row, int column) {
-//                return false; // Make all cells not editable
-//            }
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                // Chỉ cho phép sửa cột điểm
+                return column == 4;
+            }
         };
         tableGrade.setModel(model);
 
@@ -245,11 +280,7 @@ public class StudentGrade extends JPanel {
         panelSearch.add(txtSearch);
 
         buttonSearch.setText("Search");
-        buttonSearch.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-searchFunc();            }
-        });
+        buttonSearch.addActionListener(arg0 -> searchFunc());
         panelSearch.add(buttonSearch);
 
         panelStudent.add(panelSearch, BorderLayout.SOUTH);
@@ -320,37 +351,15 @@ searchFunc();            }
         showListGrade();
     }
 
-    private void saveGrade() {
-        // TODO: Refresh Table(DONE)
-        tableGrade.getModel().addTableModelListener(new TableModelListener() {
-            @Override
-            public void tableChanged(TableModelEvent e) {
-                int selectedRow = tableGrade.getSelectedRow();
-                if(selectedRow != -1) {
-                    Object enrollmentID = tableGrade.getValueAt(selectedRow,0);
-                    Object courseID = tableGrade.getValueAt(selectedRow,1);
-                    Object studentID = tableGrade.getValueAt(selectedRow,2);
-                    Object grade = tableGrade.getValueAt(selectedRow,3);
-
-                    BigDecimal grade1 = new BigDecimal(grade.toString());
-                    StudentGradeModel studentGrade = new StudentGradeModel(Integer.parseInt(enrollmentID.toString()),Integer.parseInt(courseID.toString()),Integer.parseInt(studentID.toString()),grade1);
-
-                    System.out.println(studentGrade);
-                    int result = StudentGradeBUS.getInstance().updateModel(studentGrade);
-                    if(result > 0) {
-                        JOptionPane.showMessageDialog(null, "Save successful");
-                    }else {
-                        JOptionPane.showMessageDialog(null, "Save failed");
-                    }
-                    showListGrade();
-                }
-
-            }
-        });
-    }
-
     private void addPerson() {
-        handleRowPersonSelection();
+//        handleRowPersonSelection();
+        panelNewGrade.setVisible(true);
+        if (buttonAdd.getText().equals("Add")) {
+            buttonAdd.setText("Close");
+        } else {
+            buttonAdd.setText("Add");
+            panelNewGrade.setVisible(false);
+        }
     }
 
     public void showListGrade() {
