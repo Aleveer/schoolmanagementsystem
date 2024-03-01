@@ -205,10 +205,10 @@ public class StudentGrade extends JPanel {
                 int result = StudentGradeBUS.getInstance().updateModel(studentGrade);
                 if(result > 0) {
                     JOptionPane.showMessageDialog(null, "Save successful");
+                    showListGradeByID(Integer.parseInt(studentID.toString()));
                 }else {
                     JOptionPane.showMessageDialog(null, "Save failed");
                 }
-                showListGrade();
             }
 
             public void editingCanceled(ChangeEvent e) {
@@ -310,7 +310,6 @@ public class StudentGrade extends JPanel {
         txtFirstName.setText("");
         cbTitle.setSelectedIndex(-1);
         txtGrade.setText("");
-        showListGrade();
     }
 
     private void handleRowPersonSelection() {
@@ -337,8 +336,11 @@ public class StudentGrade extends JPanel {
 
 
             for (StudentGradeModel gradeModel1 : filteredGrades) {
-                Object[] rowData = {gradeModel1.getEnrollmentID(), gradeModel1.getCourseID(),CourseBUS.getInstance().getModelById(gradeModel1.getCourseID()).getTitle(),
-                        gradeModel1.getStudentID(), gradeModel1.getGrade()};
+                Object[] rowData = {gradeModel1.getEnrollmentID(),
+                        gradeModel1.getCourseID(),CourseBUS.getInstance().getModelById(gradeModel1.getCourseID()).getTitle(),
+                        gradeModel1.getStudentID(),
+                        PersonBUS.getInstance().getModelById(gradeModel1.getStudentID()).getFirstName()+" "+PersonBUS.getInstance().getModelById(gradeModel1.getStudentID()).getLastName(),
+                        gradeModel1.getGrade()};
                 gradeModel.addRow(rowData);
             }
         }
@@ -360,10 +362,10 @@ public class StudentGrade extends JPanel {
 
         if(result > 0){
             JOptionPane.showMessageDialog(null,"Add grade successfully");
+            showListGradeByID(studentID);
         }else {
             JOptionPane.showMessageDialog(null,"Add grade failed");
         }
-        showListGrade();
     }
 
     private void addPerson() {
@@ -387,6 +389,27 @@ public class StudentGrade extends JPanel {
 
         for (StudentGradeModel grade : StudentGradeBUS.getInstance().getAllModels()) {
             model_table.addRow(new Object[]{grade.getEnrollmentID(),grade.getCourseID(),CourseBUS.getInstance().getModelById(grade.getCourseID()).getTitle(),grade.getStudentID(),PersonBUS.getInstance().getModelById(grade.getStudentID()).getFirstName()+" "+PersonBUS.getInstance().getModelById(grade.getStudentID()).getLastName(),grade.getGrade()});
+        }
+    }
+
+    public void showListGradeByID(int PersonID) {
+        StudentGradeBUS.getInstance().refresh();
+        List<StudentGradeModel> filteredGrades = studentGradeModels.stream()
+                .filter(grade -> grade.getStudentID() == PersonID)
+                .collect(Collectors.toList());
+
+        // show list
+        DefaultTableModel gradeModel = (DefaultTableModel) tableGrade.getModel();
+        gradeModel.setRowCount(0); // Clear existing rows
+
+
+        for (StudentGradeModel gradeModel1 : filteredGrades) {
+            Object[] rowData = {gradeModel1.getEnrollmentID(),
+                    gradeModel1.getCourseID(),CourseBUS.getInstance().getModelById(gradeModel1.getCourseID()).getTitle(),
+                    gradeModel1.getStudentID(),
+                    PersonBUS.getInstance().getModelById(gradeModel1.getStudentID()).getFirstName()+" "+PersonBUS.getInstance().getModelById(gradeModel1.getStudentID()).getLastName(),
+                    gradeModel1.getGrade()};
+            gradeModel.addRow(rowData);
         }
     }
 
