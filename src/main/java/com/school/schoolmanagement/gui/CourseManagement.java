@@ -34,6 +34,40 @@ public class CourseManagement extends JPanel {
 
     public CourseManagement() {
         initComponents();
+//        Add Background color for course management
+        setBackground(GlobalColor.getComplementaryColor());
+
+        //        Add color for panel
+        panelCourse.setBackground(GlobalColor.getComplementaryColor());
+        panel_online.setBackground(GlobalColor.getComplementaryColor());
+        panel_onSite.setBackground(GlobalColor.getComplementaryColor());
+        panelButton.setBackground(GlobalColor.getComplementaryColor());
+        panelInfor.setBackground(GlobalColor.getComplementaryColor());
+        panelSearch.setBackground(GlobalColor.getComplementaryColor());
+
+//        Add background color for radio button
+        radioOnsite.setBackground(GlobalColor.getComplementaryColor());
+        radioOnline.setBackground(GlobalColor.getComplementaryColor());
+
+//        Add color for button
+        for (Component c : panelButton.getComponents()) {
+            if (c instanceof JButton btn) {
+                btn.setBackground(GlobalColor.getButtonColor());
+                btn.setForeground(GlobalColor.getTextColor());
+                btn.setContentAreaFilled(false);
+                btn.setOpaque(true);
+            }
+        }
+
+        buttonSearch.setBackground(GlobalColor.getButtonColor());
+        buttonSearch.setForeground(GlobalColor.getTextColor());
+        buttonSearch.setContentAreaFilled(false);
+        buttonSearch.setOpaque(true);
+
+//        Add background color for JTable
+        table.getTableHeader().setBackground(GlobalColor.getButtonColor());
+        scrollPane.getViewport().setBackground(GlobalColor.getComplementaryColor());
+        table.setBackground(GlobalColor.getPrimaryColor());
     }
 
     private void initComponents() {
@@ -242,8 +276,8 @@ public class CourseManagement extends JPanel {
 
         panelSearch.add(comboBoxDepartment);
 
+        comboBoxDepartment.setBorder(BorderFactory.createTitledBorder("Department"));
         comboBoxStatus.setBorder(BorderFactory.createTitledBorder("Status"));
-        comboBoxStatus.setPreferredSize(new Dimension(120, 43));
         panelSearch.add(comboBoxStatus);
 
         buttonSearch.setText("Search");
@@ -315,7 +349,6 @@ public class CourseManagement extends JPanel {
             }
         });
 
-        comboBoxDepartment.addItem("");
         comboBoxStatus.addItem("");
         comboBoxStatus.addItem("Online");
         comboBoxStatus.addItem("Onsite");

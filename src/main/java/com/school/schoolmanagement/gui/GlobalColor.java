@@ -5,7 +5,8 @@ public class GlobalColor {
     // Biến toàn cục
     private static final Color primaryColor = Color.decode("#40E0D0");
     private static final Color complementaryColor = Color.decode("#40E0E0");
-    private static final Color contrastColor = Color.decode("#E0E040");
+    private static final Color textColor = Color.decode("#FFFFFF");
+    private static final Color buttonColor = Color.decode("#000000");
 
     // Phương thức để lấy màu
     public static Color getPrimaryColor() {
@@ -14,8 +15,11 @@ public class GlobalColor {
     public static Color getComplementaryColor() {
         return complementaryColor;
     }
-    public static Color getContrastColor() {
-        return contrastColor;
+    public static Color getTextColor() {
+        return textColor;
+    }
+    public static Color getButtonColor() {
+        return buttonColor;
     }
 }
 
