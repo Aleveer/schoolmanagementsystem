@@ -33,6 +33,8 @@ public class CourseInstructorManagement extends JPanel {
                             }
                         }
         );
+        tbList.setFont(new Font("Serif", Font.PLAIN, 20));
+        tbList.setRowHeight(24);
 
         txtUrl.setEditable(false);
         txtDays.setEditable(false);
@@ -346,9 +348,12 @@ public class CourseInstructorManagement extends JPanel {
         panelPerson.setLayout(new FlowLayout(FlowLayout.LEFT));
 
         labelPersonID.setText("Person");
+        labelPersonID.setFont(new Font("Serif", Font.LAYOUT_LEFT_TO_RIGHT, 22));
         panelPerson.add(labelPersonID);
 
         panelPerson.add(cbPersonId);
+        cbPersonId.setPreferredSize(new Dimension(220, 28));
+        cbPersonId.setFont(new Font("Serif", Font.PLAIN, 18));
 
         panelHeader.add(panelPerson);
 
@@ -356,14 +361,19 @@ public class CourseInstructorManagement extends JPanel {
         panelOnlineCourse.setLayout(new FlowLayout(FlowLayout.LEFT));
 
         labelCourseID.setText("Course online title");
+        labelCourseID.setFont(new Font("Serif", Font.LAYOUT_LEFT_TO_RIGHT, 22));
         panelOnlineCourse.add(labelCourseID);
 
         panelOnlineCourse.add(cbCouseOnlineId);
+        cbCouseOnlineId.setPreferredSize(new Dimension(220, 28));
+        cbCouseOnlineId.setFont(new Font("Serif", Font.PLAIN, 18));
 
         labelURL.setText("URL");
+        labelURL.setFont(new Font("Serif", Font.LAYOUT_LEFT_TO_RIGHT, 22));
         panelOnlineCourse.add(labelURL);
 
         txtUrl.setPreferredSize(new Dimension(200, 22));
+        txtUrl.setFont(new Font("Serif", Font.PLAIN, 18));
         panelOnlineCourse.add(txtUrl);
 
         panelHeader.add(panelOnlineCourse);
@@ -372,43 +382,55 @@ public class CourseInstructorManagement extends JPanel {
         panelOnsiteCourse.setLayout(new FlowLayout(FlowLayout.LEFT));
 
         labelOnsiteCourseID.setText("Course onsite title");
+        labelOnsiteCourseID.setFont(new Font("Serif", Font.LAYOUT_LEFT_TO_RIGHT, 22));
         panelOnsiteCourse.add(labelOnsiteCourseID);
 
         panelOnsiteCourse.add(cbCourseOnsiteId);
+        cbCourseOnsiteId.setPreferredSize(new Dimension(220, 28));
+        cbCourseOnsiteId.setFont(new Font("Serif", Font.PLAIN, 18));
 
         labelLocation.setText("Location");
+        labelLocation.setFont(new Font("Serif", Font.LAYOUT_LEFT_TO_RIGHT, 22));
         panelOnsiteCourse.add(labelLocation);
 
         txtLocation.setPreferredSize(new Dimension(140, 22));
         panelOnsiteCourse.add(txtLocation);
+        txtLocation.setFont(new Font("Serif", Font.PLAIN, 18));
 
         labelDay.setText("Days");
+        labelDay.setFont(new Font("Serif", Font.LAYOUT_LEFT_TO_RIGHT, 22));
         panelOnsiteCourse.add(labelDay);
 
         txtDays.setPreferredSize(new Dimension(140, 22));
         panelOnsiteCourse.add(txtDays);
+        txtDays.setFont(new Font("Serif", Font.PLAIN, 18));
 
         labelTime.setText("Time");
+        labelTime.setFont(new Font("Serif", Font.LAYOUT_LEFT_TO_RIGHT, 22));
         panelOnsiteCourse.add(labelTime);
 
         txtTime.setPreferredSize(new Dimension(140, 22));
         panelOnsiteCourse.add(txtTime);
+        txtTime.setFont(new Font("Serif", Font.PLAIN, 18));
 
         panelHeader.add(panelOnsiteCourse);
 
         btnAssign.setText("Assign");
         panelButton.add(btnAssign);
+        btnAssign.setFont(new Font("Serif", Font.BOLD, 18));
 
         buttonNoAssign.setText("No Assign");
         buttonNoAssign.setToolTipText("");
+        buttonNoAssign.setFont(new Font("Serif", Font.BOLD, 18));
         panelButton.add(buttonNoAssign);
 
         panelHeader.add(panelButton);
 
 //        Add search text field and button search
         panelSearch.setLayout(new FlowLayout(FlowLayout.LEFT));
-        txtSearch.setPreferredSize(new Dimension(180, 22));
+        txtSearch.setPreferredSize(new Dimension(200, 28));
         btnSearch.setText("Search");
+        btnSearch.setFont(new Font("Serif", Font.BOLD, 18));
         panelSearch.add(txtSearch);
         panelSearch.add(btnSearch);
         panelHeader.add(panelSearch);

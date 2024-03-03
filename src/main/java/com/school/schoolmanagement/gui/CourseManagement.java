@@ -49,7 +49,7 @@ public class CourseManagement extends JPanel {
         radioOnsite.setBackground(GlobalColor.getComplementaryColor());
         radioOnline.setBackground(GlobalColor.getComplementaryColor());
 
-//        Add color for button
+    //    Add color for button
         for (Component c : panelButton.getComponents()) {
             if (c instanceof JButton btn) {
                 btn.setBackground(GlobalColor.getButtonColor());
@@ -128,7 +128,8 @@ public class CourseManagement extends JPanel {
 
         labelId.setHorizontalAlignment(SwingConstants.RIGHT);
         labelId.setText("ID Course");
-        labelId.setPreferredSize(new Dimension(100, 16));
+        labelId.setPreferredSize(new Dimension(150, 26));
+        labelId.setFont(new Font("Serif", Font.LAYOUT_LEFT_TO_RIGHT, 22));
 
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -136,7 +137,8 @@ public class CourseManagement extends JPanel {
 
         panelInfor.add(labelId, gridBagConstraints);
 
-        textFieldId.setPreferredSize(new Dimension(220, 22));
+        textFieldId.setPreferredSize(new Dimension(220, 28));
+        textFieldId.setFont(new Font("Serif", Font.PLAIN, 18));
 
         gridBagConstraints = new GridBagConstraints();
 
@@ -148,7 +150,8 @@ public class CourseManagement extends JPanel {
 
         labelTitle.setHorizontalAlignment(SwingConstants.RIGHT);
         labelTitle.setText("Title");
-        labelTitle.setPreferredSize(new Dimension(100, 16));
+        labelTitle.setPreferredSize(new Dimension(150, 26));
+        labelTitle.setFont(new Font("Serif", Font.LAYOUT_LEFT_TO_RIGHT, 22));
 
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -156,7 +159,8 @@ public class CourseManagement extends JPanel {
 
         panelInfor.add(labelTitle, gridBagConstraints);
 
-        textFieldTitle.setPreferredSize(new Dimension(220, 22));
+        textFieldTitle.setPreferredSize(new Dimension(220, 28));
+        textFieldTitle.setFont(new Font("Serif", Font.PLAIN, 18));
 
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 2;
@@ -166,7 +170,8 @@ public class CourseManagement extends JPanel {
 
         labelCredits.setHorizontalAlignment(SwingConstants.RIGHT);
         labelCredits.setText("Credits");
-        labelCredits.setPreferredSize(new Dimension(100, 16));
+        labelCredits.setPreferredSize(new Dimension(150, 26));
+        labelCredits.setFont(new Font("Serif", Font.LAYOUT_LEFT_TO_RIGHT, 22));
 
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -174,7 +179,8 @@ public class CourseManagement extends JPanel {
 
         panelInfor.add(labelCredits, gridBagConstraints);
 
-        textFieldCredit.setPreferredSize(new Dimension(220, 22));
+        textFieldCredit.setPreferredSize(new Dimension(220, 28));
+        textFieldCredit.setFont(new Font("Serif", Font.PLAIN, 18));
 
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 2;
@@ -184,7 +190,8 @@ public class CourseManagement extends JPanel {
 
         labelDepartment.setHorizontalAlignment(SwingConstants.RIGHT);
         labelDepartment.setText("Department");
-        labelDepartment.setPreferredSize(new Dimension(100, 16));
+        labelDepartment.setPreferredSize(new Dimension(150, 30));
+        labelDepartment.setFont(new Font("Serif", Font.LAYOUT_LEFT_TO_RIGHT, 22));
 
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -197,7 +204,8 @@ public class CourseManagement extends JPanel {
         for(DepartmentModel department : DepartmentBUS.getInstance().getAllModels()) {
             departmentComboBox.addItem(department.getName()+"");
         }
-        departmentComboBox.setPreferredSize(new Dimension(220, 22));
+        departmentComboBox.setPreferredSize(new Dimension(220, 28));
+        departmentComboBox.setFont(new Font("Serif", Font.PLAIN, 18));
 
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 2;
@@ -209,7 +217,9 @@ public class CourseManagement extends JPanel {
         panelCourse.setLayout(new GridLayout(2, 2));
 
         radioOnline.setText("Online Course");
+        radioOnline.setFont(new Font("Serif", Font.LAYOUT_LEFT_TO_RIGHT, 22));
         radioOnsite.setText("Onsite Course");
+        radioOnsite.setFont(new Font("Serif", Font.LAYOUT_LEFT_TO_RIGHT, 22));
 
         panelCourse.add(radioOnline);
         panelCourse.add(radioOnsite);
@@ -218,17 +228,21 @@ public class CourseManagement extends JPanel {
 
         panel_online.setLayout(new FlowLayout(FlowLayout.LEFT));
         labelURL.setText("URL");
+        labelURL.setFont(new Font("Serif", Font.LAYOUT_LEFT_TO_RIGHT, 20));
         panel_online.add(labelURL);
-        txtURL.setPreferredSize(new Dimension(160, 35));
+        txtURL.setPreferredSize(new Dimension(160, 20));
         panel_online.add(txtURL);
 
         panel_onSite.setLayout(new GridLayout(3,2, 5, 10));
 
         labelLocation.setText("Location");
+        labelLocation.setFont(new Font("Serif", Font.LAYOUT_LEFT_TO_RIGHT, 20));
         txtLocation.setPreferredSize(new Dimension(110, 20));
         labelDays.setText("Days");
+        labelDays.setFont(new Font("Serif", Font.LAYOUT_LEFT_TO_RIGHT, 20));
         txtDays.setPreferredSize(new Dimension(110, 20));
         labelTime.setText("Time");
+        labelTime.setFont(new Font("Serif", Font.LAYOUT_LEFT_TO_RIGHT, 20));
         txtTime.setPreferredSize(new Dimension(110, 20));
 
         panel_onSite.add(labelLocation);
@@ -246,15 +260,19 @@ public class CourseManagement extends JPanel {
         panelButton.setLayout(new FlowLayout(FlowLayout.LEFT, 15, 5));
 
         buttonAdd.setText("Add");
+        buttonAdd.setFont(new Font("Serif", Font.BOLD, 20));
         panelButton.add(buttonAdd);
         buttonDelete.setText("Delete");
+        buttonDelete.setFont(new Font("Serif", Font.BOLD, 20));
         panelButton.add(buttonDelete);
         textFieldId.setEnabled(false);
 
         buttonUpdate.setText("Update");
+        buttonUpdate.setFont(new Font("Serif", Font.BOLD, 20));
         panelButton.add(buttonUpdate);
 
         buttonRefresh.setText("Refresh");
+        buttonRefresh.setFont(new Font("Serif", Font.BOLD, 20));
         panelButton.add(buttonRefresh);
 
         panelHeader.add(panelButton, BorderLayout.SOUTH);
@@ -266,7 +284,8 @@ public class CourseManagement extends JPanel {
         panelSearch.setLayout(new FlowLayout(FlowLayout.LEFT));
 
         textFieldSearch.setToolTipText("");
-        textFieldSearch.setPreferredSize(new Dimension(170, 22));
+        textFieldSearch.setFont(new Font("Serif", Font.PLAIN, 18));
+        textFieldSearch.setPreferredSize(new Dimension(200, 28));
 
         panelSearch.add(textFieldSearch);
         comboBoxDepartment.addItem("");
@@ -277,10 +296,13 @@ public class CourseManagement extends JPanel {
         panelSearch.add(comboBoxDepartment);
 
         comboBoxDepartment.setBorder(BorderFactory.createTitledBorder("Department"));
+        comboBoxDepartment.setFont(new Font("Serif", Font.PLAIN, 18));
         comboBoxStatus.setBorder(BorderFactory.createTitledBorder("Status"));
+        comboBoxStatus.setFont(new Font("Serif", Font.PLAIN, 18));
         panelSearch.add(comboBoxStatus);
 
         buttonSearch.setText("Search");
+        buttonSearch.setFont(new Font("Serif", Font.BOLD, 20));
         panelSearch.add(buttonSearch);
 
         panel.add(panelSearch, BorderLayout.PAGE_START);
@@ -297,6 +319,7 @@ public class CourseManagement extends JPanel {
 
         DefaultTableModel model = new DefaultTableModel(data, columnNames);
         table.setModel(model);
+        table.setFont(new Font("Serif", Font.PLAIN, 20));
 
         scrollPane.setViewportView(table);
 
@@ -326,6 +349,7 @@ public class CourseManagement extends JPanel {
                        }
 
         );
+        table.setRowHeight(24);
 
         radioOnline.addActionListener(e -> {
             if (radioOnline.isSelected()) {

@@ -75,43 +75,49 @@ public class StudentGrade extends JPanel {
         txtPersonID.setEnabled(false);
 
         panelHeader.setPreferredSize(new Dimension(635, 180));
-        panelHeader.setLayout(new GridLayout());
+        panelHeader.setLayout(new BorderLayout());
 
         panelInfor.setLayout(new BorderLayout());
 
         panelPerson.setLayout(new GridBagLayout());
 
         labelPersonID.setText("Person ID");
+        labelPersonID.setFont(new Font("Serif", Font.LAYOUT_LEFT_TO_RIGHT, 20));
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         panelPerson.add(labelPersonID, gridBagConstraints);
 
-        txtPersonID.setPreferredSize(new Dimension(120, 22));
+        txtPersonID.setPreferredSize(new Dimension(180, 23));
+        txtPersonID.setFont(new Font("Serif", Font.PLAIN, 18));
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
         panelPerson.add(txtPersonID, gridBagConstraints);
 
         labelLastName.setText("Last Name");
+        labelLastName.setFont(new Font("Serif", Font.LAYOUT_LEFT_TO_RIGHT, 20));
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
         panelPerson.add(labelLastName, gridBagConstraints);
 
-        txtLastName.setPreferredSize(new Dimension(120, 22));
+        txtLastName.setPreferredSize(new Dimension(180, 23));
+        txtLastName.setFont(new Font("Serif", Font.PLAIN, 18));
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 2;
         panelPerson.add(txtLastName, gridBagConstraints);
 
         labelFirstName.setText("First Name");
+        labelFirstName.setFont(new Font("Serif", Font.LAYOUT_LEFT_TO_RIGHT, 20));
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 4;
         panelPerson.add(labelFirstName, gridBagConstraints);
 
-        txtFirstName.setPreferredSize(new Dimension(120, 22));
+        txtFirstName.setPreferredSize(new Dimension(180, 23));
+        txtFirstName.setFont(new Font("Serif", Font.PLAIN, 18));
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 4;
@@ -216,7 +222,7 @@ public class StudentGrade extends JPanel {
             }
         });
 
-        panelHeader.add(panelInfor);
+        panelHeader.add(panelInfor, BorderLayout.WEST);
         // TODO: Can't scroll, fix
         String[] columnNames = { "EnrollmentID", "CourseID", "Course Name","StudentID","Student Name", "Grade" };
         Object[][] data = new Object[studentGradeModels.size()][6];
@@ -254,14 +260,12 @@ public class StudentGrade extends JPanel {
             }
         };
         tableGrade.setModel(model);
-
-
-        tableGrade.setMaximumSize(new Dimension(60, 652));
-        tableGrade.setPreferredSize(new Dimension(100, 652));
+        tableGrade.setFont(new Font("Serif", Font.PLAIN, 16));
+        tableGrade.setRowHeight(26);
         scrollPane1.setViewportView(tableGrade);
 
 
-        panelHeader.add(scrollPane1);
+        panelHeader.add(scrollPane1, BorderLayout.CENTER);
 
         add(panelHeader, BorderLayout.NORTH);
 
@@ -287,9 +291,14 @@ public class StudentGrade extends JPanel {
         };
         tableStudent.setModel(model1);
         tableStudent.getTableHeader().setReorderingAllowed(false);
+        tableStudent.setFont(new Font("Serif", Font.PLAIN, 20));
+        tableStudent.setRowHeight(24);
+        JPanel panelTest = new JPanel();
+        panelTest.setLayout(new BorderLayout());
         scrollPane2.setViewportView(tableStudent);
+        panelTest.add(scrollPane2, BorderLayout.CENTER);
 
-        panelStudent.add(scrollPane2, BorderLayout.CENTER);
+        panelStudent.add(panelTest, BorderLayout.CENTER);
 
         txtSearch.setPreferredSize(new Dimension(160, 22));
         panelSearch.add(txtSearch);
