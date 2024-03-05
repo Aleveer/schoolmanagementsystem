@@ -1,6 +1,7 @@
 package com.school.schoolmanagement.gui;
 
 import com.school.schoolmanagement.bus.*;
+import com.school.schoolmanagement.gui.components.*;
 import com.school.schoolmanagement.models.*;
 
 import javax.swing.*;
@@ -33,7 +34,6 @@ public class CourseInstructorManagement extends JPanel {
                             }
                         }
         );
-        tbList.setFont(new Font("Serif", Font.PLAIN, 20));
         tbList.setRowHeight(24);
 
         txtUrl.setEditable(false);
@@ -316,29 +316,29 @@ public class CourseInstructorManagement extends JPanel {
         panelHeader = new JPanel();
         panelPerson = new JPanel();
         panelSearch = new JPanel();
-        labelPersonID = new JLabel();
+        labelPersonID = new FormLabel();
         cbPersonId = new JComboBox<>();
         panelOnlineCourse = new JPanel();
-        labelCourseID = new JLabel();
+        labelCourseID = new FormLabel();
         cbCouseOnlineId = new JComboBox<>();
-        labelURL = new JLabel();
-        txtUrl = new JTextField();
+        labelURL = new FormLabel();
+        txtUrl = new FormTextField();
         panelOnsiteCourse = new JPanel();
-        labelOnsiteCourseID = new JLabel();
+        labelOnsiteCourseID = new FormLabel();
         cbCourseOnsiteId = new JComboBox<>();
-        labelLocation = new JLabel();
-        txtLocation = new JTextField();
-        labelDay = new JLabel();
-        txtDays = new JTextField();
-        labelTime = new JLabel();
-        txtTime = new JTextField();
+        labelLocation = new FormLabel();
+        txtLocation = new FormTextField();
+        labelDay = new FormLabel();
+        txtDays = new FormTextField();
+        labelTime = new FormLabel();
+        txtTime = new FormTextField();
         panelButton = new JPanel();
-        btnAssign = new JButton();
-        btnSearch = new JButton();
-        txtSearch = new JTextField();
-        buttonNoAssign = new JButton();
+        btnAssign = new FormButton();
+        btnSearch = new FormButton();
+        txtSearch = new TextFieldSearch();
+        buttonNoAssign = new FormButton();
         scrollPane = new JScrollPane();
-        tbList = new JTable();
+        tbList = new Table();
 
         setLayout(new BorderLayout());
 
@@ -348,12 +348,11 @@ public class CourseInstructorManagement extends JPanel {
         panelPerson.setLayout(new FlowLayout(FlowLayout.LEFT));
 
         labelPersonID.setText("Person");
-        labelPersonID.setFont(new Font("Serif", Font.LAYOUT_LEFT_TO_RIGHT, 22));
         panelPerson.add(labelPersonID);
 
         panelPerson.add(cbPersonId);
         cbPersonId.setPreferredSize(new Dimension(220, 28));
-        cbPersonId.setFont(new Font("Serif", Font.PLAIN, 18));
+        cbPersonId.setFont(new Font("sanserif", 1, 12));
 
         panelHeader.add(panelPerson);
 
@@ -361,19 +360,16 @@ public class CourseInstructorManagement extends JPanel {
         panelOnlineCourse.setLayout(new FlowLayout(FlowLayout.LEFT));
 
         labelCourseID.setText("Course online title");
-        labelCourseID.setFont(new Font("Serif", Font.LAYOUT_LEFT_TO_RIGHT, 22));
         panelOnlineCourse.add(labelCourseID);
 
         panelOnlineCourse.add(cbCouseOnlineId);
         cbCouseOnlineId.setPreferredSize(new Dimension(220, 28));
-        cbCouseOnlineId.setFont(new Font("Serif", Font.PLAIN, 18));
+        cbCouseOnlineId.setFont(new Font("sanserif", 1, 12));
 
         labelURL.setText("URL");
-        labelURL.setFont(new Font("Serif", Font.LAYOUT_LEFT_TO_RIGHT, 22));
         panelOnlineCourse.add(labelURL);
 
         txtUrl.setPreferredSize(new Dimension(200, 22));
-        txtUrl.setFont(new Font("Serif", Font.PLAIN, 18));
         panelOnlineCourse.add(txtUrl);
 
         panelHeader.add(panelOnlineCourse);
@@ -382,46 +378,37 @@ public class CourseInstructorManagement extends JPanel {
         panelOnsiteCourse.setLayout(new FlowLayout(FlowLayout.LEFT));
 
         labelOnsiteCourseID.setText("Course onsite title");
-        labelOnsiteCourseID.setFont(new Font("Serif", Font.LAYOUT_LEFT_TO_RIGHT, 22));
         panelOnsiteCourse.add(labelOnsiteCourseID);
 
         panelOnsiteCourse.add(cbCourseOnsiteId);
         cbCourseOnsiteId.setPreferredSize(new Dimension(220, 28));
-        cbCourseOnsiteId.setFont(new Font("Serif", Font.PLAIN, 18));
+        cbCourseOnsiteId.setFont(new Font("sanserif", 1, 12));
 
         labelLocation.setText("Location");
-        labelLocation.setFont(new Font("Serif", Font.LAYOUT_LEFT_TO_RIGHT, 22));
         panelOnsiteCourse.add(labelLocation);
 
         txtLocation.setPreferredSize(new Dimension(140, 22));
         panelOnsiteCourse.add(txtLocation);
-        txtLocation.setFont(new Font("Serif", Font.PLAIN, 18));
 
         labelDay.setText("Days");
-        labelDay.setFont(new Font("Serif", Font.LAYOUT_LEFT_TO_RIGHT, 22));
         panelOnsiteCourse.add(labelDay);
 
         txtDays.setPreferredSize(new Dimension(140, 22));
         panelOnsiteCourse.add(txtDays);
-        txtDays.setFont(new Font("Serif", Font.PLAIN, 18));
 
         labelTime.setText("Time");
-        labelTime.setFont(new Font("Serif", Font.LAYOUT_LEFT_TO_RIGHT, 22));
         panelOnsiteCourse.add(labelTime);
 
         txtTime.setPreferredSize(new Dimension(140, 22));
         panelOnsiteCourse.add(txtTime);
-        txtTime.setFont(new Font("Serif", Font.PLAIN, 18));
 
         panelHeader.add(panelOnsiteCourse);
 
         btnAssign.setText("Assign");
         panelButton.add(btnAssign);
-        btnAssign.setFont(new Font("Serif", Font.BOLD, 18));
 
         buttonNoAssign.setText("No Assign");
         buttonNoAssign.setToolTipText("");
-        buttonNoAssign.setFont(new Font("Serif", Font.BOLD, 18));
         panelButton.add(buttonNoAssign);
 
         panelHeader.add(panelButton);
@@ -430,7 +417,6 @@ public class CourseInstructorManagement extends JPanel {
         panelSearch.setLayout(new FlowLayout(FlowLayout.LEFT));
         txtSearch.setPreferredSize(new Dimension(200, 28));
         btnSearch.setText("Search");
-        btnSearch.setFont(new Font("Serif", Font.BOLD, 18));
         panelSearch.add(txtSearch);
         panelSearch.add(btnSearch);
         panelHeader.add(panelSearch);
