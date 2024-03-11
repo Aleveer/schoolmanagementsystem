@@ -6,11 +6,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.school.schoolmanagement.dal.StudentGradeDAL;
-import com.school.schoolmanagement.models.CourseModel;
-import com.school.schoolmanagement.models.PersonModel;
 import com.school.schoolmanagement.models.StudentGradeModel;
-
-import javax.swing.*;
 
 public class StudentGradeBUS {
     private final List<StudentGradeModel> studentGradeList = new ArrayList<>();
@@ -49,7 +45,7 @@ public class StudentGradeBUS {
     public int getMax() {
         refresh();
         int count = 0;
-        for(StudentGradeModel person : studentGradeList) {
+        for (StudentGradeModel person : studentGradeList) {
             count++;
         }
         return count + 1;
@@ -115,17 +111,17 @@ public class StudentGradeBUS {
     private boolean checkFilter(StudentGradeModel StudentGradeModel, String value, String[] columns) {
         for (String column : columns) {
             switch (column.toLowerCase()) {
-                case "courseid":
+                case "CourseID":
                     if (Integer.parseInt(value) == StudentGradeModel.getCourseID()) {
                         return true;
                     }
                     break;
-                case "studentid":
+                case "StudentID":
                     if (Integer.parseInt(value) == StudentGradeModel.getStudentID()) {
                         return true;
                     }
                     break;
-                case "enrollmentid":
+                case "EnrollmentID":
                     if (Integer.parseInt(value) == StudentGradeModel.getEnrollmentID()) {
                         return true;
                     }

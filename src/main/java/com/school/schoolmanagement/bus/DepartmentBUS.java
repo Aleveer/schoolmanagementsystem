@@ -47,7 +47,7 @@ public class DepartmentBUS {
                 || DepartmentModel.getAdministrator() <= 0
                 || DepartmentModel.getStartDate() == null
                 || DepartmentModel.getStartDate().getTime() <= System.currentTimeMillis()) {
-            throw new IllegalArgumentException("error infomation, try again!!!");
+            throw new IllegalArgumentException("Error information, try again!");
         }
 
         int result = DepartmentDAL.getInstance().insert(DepartmentModel);

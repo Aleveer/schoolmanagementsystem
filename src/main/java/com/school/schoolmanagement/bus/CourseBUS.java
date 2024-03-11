@@ -88,27 +88,15 @@ public class CourseBUS {
     }
 
     public List<CourseModel> searchModel(String value, String[] columns) {
-        List<CourseModel> items = CourseDAL.getInstance().search(value,columns);
+        List<CourseModel> items = CourseDAL.getInstance().search(value, columns);
         List<CourseModel> results = new ArrayList<>();
 
-//        for(DepartmentModel department : DepartmentBUS.getInstance().getAllModels()) {
-//            if(value.equalsIgnoreCase(department.getName()) || department.getName().toLowerCase().contains(value.toLowerCase())) {
-//                value = String.valueOf(department.getDepartmentID());
-//            }
-//        }
-//        System.out.println("test value: "+value);
         for (CourseModel item : items) {
             if (checkFilter(item, value, columns)) {
                 results.add(item);
             }
         }
         return results;
-    }
-
-    public List<CourseModel> searchConditions(String value,String departmentName, String status) {
-        List<CourseModel> items = CourseDAL.getInstance().searchConditions(value,departmentName,status);
-
-        return new ArrayList<>(items);
     }
 
     private boolean checkFilter(CourseModel courseModel, String value, String[] columns) {

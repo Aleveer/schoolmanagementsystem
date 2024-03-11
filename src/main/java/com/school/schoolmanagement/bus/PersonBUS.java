@@ -42,10 +42,11 @@ public class PersonBUS {
         return null;
     }
 
+    //TODO: What's this function for?
     public int getMax() {
         refresh();
         int count = 0;
-        for(PersonModel person : personList) {
+        for (PersonModel person : personList) {
             count++;
         }
         return count + 1;
@@ -54,7 +55,7 @@ public class PersonBUS {
     public int addModel(PersonModel PersonModel) {
         if (PersonModel.getLastName().isEmpty() || PersonModel.getLastName() == null
                 || PersonModel.getFirstName().isEmpty() || PersonModel.getFirstName() == null) {
-            throw new IllegalArgumentException("error infomation, try again!!!");
+            throw new IllegalArgumentException("Error information, try again!");
         }
 
         int result = PersonDAL.getInstance().insert(PersonModel);
@@ -130,7 +131,9 @@ public class PersonBUS {
                     break;
                 case "EnrollmentDate":
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                    String enrollmentDateAsString = (personModel.getEnrollmentDate() != null) ? dateFormat.format(personModel.getEnrollmentDate()) : "";
+                    String enrollmentDateAsString = (personModel.getEnrollmentDate() != null)
+                            ? dateFormat.format(personModel.getEnrollmentDate())
+                            : "";
                     if (value.equals(enrollmentDateAsString)) {
                         return true;
                     }
@@ -141,6 +144,5 @@ public class PersonBUS {
         }
         return false;
     }
-
 
 }

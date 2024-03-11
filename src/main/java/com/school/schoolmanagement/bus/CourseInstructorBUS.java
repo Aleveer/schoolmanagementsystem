@@ -44,7 +44,7 @@ public class CourseInstructorBUS {
     public int addModel(CourseInstructorModel CourseInstructorModel) {
         if (CourseInstructorModel.getCourseID() <= 0
                 || CourseInstructorModel.getPersonID() <= 0) {
-            throw new IllegalArgumentException("error infomation, try again!!!");
+            throw new IllegalArgumentException("Error Information, please try again!");
         }
 
         int result = CourseInstructorDAL.getInstance().insert(CourseInstructorModel);

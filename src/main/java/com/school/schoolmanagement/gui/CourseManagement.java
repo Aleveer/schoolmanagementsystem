@@ -34,10 +34,10 @@ public class CourseManagement extends JPanel {
 
     public CourseManagement() {
         initComponents();
-//        Add Background color for course management
+        // Add Background color for course management
         setBackground(GlobalColor.getComplementaryColor());
 
-        //        Add color for panel
+        // Add color for panel
         panelCourse.setBackground(GlobalColor.getComplementaryColor());
         panel_online.setBackground(GlobalColor.getComplementaryColor());
         panel_onSite.setBackground(GlobalColor.getComplementaryColor());
@@ -45,11 +45,11 @@ public class CourseManagement extends JPanel {
         panelInfor.setBackground(GlobalColor.getComplementaryColor());
         panelSearch.setBackground(GlobalColor.getComplementaryColor());
 
-//        Add background color for radio button
+        // Add background color for radio button
         radioOnsite.setBackground(GlobalColor.getComplementaryColor());
         radioOnline.setBackground(GlobalColor.getComplementaryColor());
 
-//        Add color for button
+        // Add color for button
         for (Component c : panelButton.getComponents()) {
             if (c instanceof JButton btn) {
                 btn.setBackground(GlobalColor.getButtonColor());
@@ -64,7 +64,7 @@ public class CourseManagement extends JPanel {
         buttonSearch.setContentAreaFilled(false);
         buttonSearch.setOpaque(true);
 
-//        Add background color for JTable
+        // Add background color for JTable
         table.getTableHeader().setBackground(GlobalColor.getButtonColor());
         scrollPane.getViewport().setBackground(GlobalColor.getComplementaryColor());
         table.setBackground(GlobalColor.getPrimaryColor());
@@ -114,8 +114,8 @@ public class CourseManagement extends JPanel {
         btnGroup.add(radioOnline);
         btnGroup.add(radioOnsite);
 
-//        Add padding for panel
-        setBorder(new EmptyBorder(10, 10, 10 ,10));
+        // Add padding for panel
+        setBorder(new EmptyBorder(10, 10, 10, 10));
 
         setLayout(new BorderLayout());
 
@@ -192,10 +192,9 @@ public class CourseManagement extends JPanel {
 
         panelInfor.add(labelDepartment, gridBagConstraints);
 
-
         departmentComboBox.addItem("");
-        for(DepartmentModel department : DepartmentBUS.getInstance().getAllModels()) {
-            departmentComboBox.addItem(department.getName()+"");
+        for (DepartmentModel department : DepartmentBUS.getInstance().getAllModels()) {
+            departmentComboBox.addItem(department.getName() + "");
         }
         departmentComboBox.setPreferredSize(new Dimension(220, 22));
 
@@ -222,7 +221,7 @@ public class CourseManagement extends JPanel {
         txtURL.setPreferredSize(new Dimension(160, 35));
         panel_online.add(txtURL);
 
-        panel_onSite.setLayout(new GridLayout(3,2, 5, 10));
+        panel_onSite.setLayout(new GridLayout(3, 2, 5, 10));
 
         labelLocation.setText("Location");
         txtLocation.setPreferredSize(new Dimension(110, 20));
@@ -270,8 +269,8 @@ public class CourseManagement extends JPanel {
 
         panelSearch.add(textFieldSearch);
         comboBoxDepartment.addItem("");
-        for(DepartmentModel department : DepartmentBUS.getInstance().getAllModels()) {
-            comboBoxDepartment.addItem(department.getName()+"");
+        for (DepartmentModel department : DepartmentBUS.getInstance().getAllModels()) {
+            comboBoxDepartment.addItem(department.getName() + "");
         }
 
         panelSearch.add(comboBoxDepartment);
@@ -314,16 +313,16 @@ public class CourseManagement extends JPanel {
         });
 
         table.setModel(new DefaultTableModel(
-                               new Object[][] {
-                               },
-                               new String[] {
-                                       "CourseID", "Title", "Credits", "DepartmentID", "Status"
-                               }) {
-                           @Override
-                           public boolean isCellEditable(int row, int column) {
-                               return column == getColumnCount();
-                           }
-                       }
+                new Object[][] {
+                },
+                new String[] {
+                        "CourseID", "Title", "Credits", "DepartmentID", "Status"
+                }) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return column == getColumnCount();
+            }
+        }
 
         );
 
@@ -437,7 +436,7 @@ public class CourseManagement extends JPanel {
                         String timeText = txtTime.getText();
                         SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
 
-                        java.util.Date parsedDate;  // Change to java.util.Date
+                        java.util.Date parsedDate; // Change to java.util.Date
                         try {
                             parsedDate = timeFormat.parse(timeText);
                         } catch (ParseException | java.text.ParseException e1) {
@@ -470,11 +469,36 @@ public class CourseManagement extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String value = textFieldSearch.getText();
-                String departmentName = comboBoxDepartment.getSelectedItem()+"";
-                String status = comboBoxStatus.getSelectedItem()+"";
+                String departmentName = comboBoxDepartment.getSelectedItem().toString();
+                String status = comboBoxStatus.getSelectedItem().toString();
 
-                List<CourseModel> models = CourseBUS.getInstance().searchConditions(value,departmentName,status);
-                showSearchResult(models);
+                List<CourseModel> models = CourseBUS.getInstance().searchModel(value,
+                        new String[] { "CourseID", "Title", "Credits", "DepartmentID" });
+                List<CourseModel> filteredModels = new ArrayList<>();
+                for (CourseModel model : models) {
+                    DepartmentModel department = DepartmentBUS.getInstance().getModelById(model.getDepartmentID());
+                    OnlineCourseModel online = OnlineCourseBUS.getInstance().getModelById(model.getId());
+                    boolean isOnline = (online != null && !online.getUrl().isEmpty());
+                    if (departmentName.isEmpty() && status.isEmpty()) {
+                        filteredModels.add(model);
+                    } else if (departmentName.isEmpty() && !status.isEmpty()) {
+                        if (status.equals("Online") && isOnline) {
+                            filteredModels.add(model);
+                        } else if (status.equals("Onsite") && !isOnline) {
+                            filteredModels.add(model);
+                        }
+                    } else if (!departmentName.isEmpty() && status.isEmpty()) {
+                        if (department.getName().equals(departmentName)) {
+                            filteredModels.add(model);
+                        }
+                    } else {
+                        if (department.getName().equals(departmentName)
+                                && ((status.equals("Online") && isOnline) || (status.equals("Onsite") && !isOnline))) {
+                            filteredModels.add(model);
+                        }
+                    }
+                }
+                showSearchResult(filteredModels);
             }
         });
         showListCourse();
@@ -542,8 +566,8 @@ public class CourseManagement extends JPanel {
         int credits = Integer.parseInt(textFieldCredit.getText());
         String departmentName = departmentComboBox.getSelectedItem() + "";
         int departmentID = 0;
-        for(DepartmentModel department : DepartmentBUS.getInstance().getAllModels()) {
-            if(departmentName.equals(department.getName())) {
+        for (DepartmentModel department : DepartmentBUS.getInstance().getAllModels()) {
+            if (departmentName.equals(department.getName())) {
                 departmentID = department.getDepartmentID();
             }
         }
@@ -577,12 +601,13 @@ public class CourseManagement extends JPanel {
             int seconds = Integer.parseInt(timeParts[2]);
 
             if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59 || seconds < 0 || seconds > 59) {
-                JOptionPane.showMessageDialog(null, "Invalid time values. Please use valid hour, minute, and second values.");
+                JOptionPane.showMessageDialog(null,
+                        "Invalid time values. Please use valid hour, minute, and second values.");
                 return;
             }
 
             SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-            java.util.Date parsedDate;  // Change to java.util.Date
+            java.util.Date parsedDate; // Change to java.util.Date
 
             try {
                 parsedDate = timeFormat.parse(timeText);
@@ -594,7 +619,9 @@ public class CourseManagement extends JPanel {
             java.sql.Time time = new java.sql.Time(parsedDate.getTime());
 
             CourseModel newCourse = new CourseModel(CourseID, title, credits, departmentID);
-            OnsiteCourseModel onsiteCourse = new OnsiteCourseModel(CourseID, textFieldTitle.getText(), Integer.parseInt(textFieldCredit.getText()), departmentID, txtLocation.getText(), txtDays.getText(), time);
+            OnsiteCourseModel onsiteCourse = new OnsiteCourseModel(CourseID, textFieldTitle.getText(),
+                    Integer.parseInt(textFieldCredit.getText()), departmentID, txtLocation.getText(), txtDays.getText(),
+                    time);
             int resultModel = CourseBUS.getInstance().addModel(newCourse);
             int newOnsiteCourse = OnsiteCourseBUS.getInstance().addModel(onsiteCourse);
             if (resultModel == 1 && newOnsiteCourse == 1) {
@@ -633,10 +660,9 @@ public class CourseManagement extends JPanel {
             textFieldCredit.setText(credit.toString());
             departmentComboBox.setSelectedItem(departmentName.toString());
 
-            if(status.toString().equals("Online")) {
-                for(OnlineCourseModel online : OnlineCourseBUS.getInstance().getAllModels())
-                {
-                    if(Integer.parseInt(courseID.toString()) == online.getId()) {
+            if (status.toString().equals("Online")) {
+                for (OnlineCourseModel online : OnlineCourseBUS.getInstance().getAllModels()) {
+                    if (Integer.parseInt(courseID.toString()) == online.getId()) {
                         txtURL.setText(online.getUrl());
                         break;
                     }
@@ -644,11 +670,11 @@ public class CourseManagement extends JPanel {
                 radioOnline.doClick();
                 radioOnsite.setSelected(false);
             } else if (status.toString().equals("Onsite")) {
-                for(OnsiteCourseModel onsite : OnsiteCourseBUS.getInstance().getAllModels()) {
-                    if(Integer.parseInt(courseID.toString()) == onsite.getId()) {
+                for (OnsiteCourseModel onsite : OnsiteCourseBUS.getInstance().getAllModels()) {
+                    if (Integer.parseInt(courseID.toString()) == onsite.getId()) {
                         txtLocation.setText(onsite.getLocation());
                         txtDays.setText(onsite.getDays());
-                        txtTime.setText(onsite.getTime()+"");
+                        txtTime.setText(onsite.getTime() + "");
                     }
                 }
                 radioOnsite.doClick();
@@ -659,9 +685,8 @@ public class CourseManagement extends JPanel {
 
     public int getRandom() {
         Random rand = new Random();
-        return rand.nextInt(9999)+1;
+        return rand.nextInt(9999) + 1;
     }
-
 
     public void showSearchResult(List<CourseModel> search) {
         DefaultTableModel model = (DefaultTableModel) table.getModel();
