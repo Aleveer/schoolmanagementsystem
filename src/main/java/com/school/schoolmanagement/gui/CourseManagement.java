@@ -3,12 +3,10 @@ package com.school.schoolmanagement.gui;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import java.util.ArrayList;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.sql.Time;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -21,12 +19,11 @@ import com.school.schoolmanagement.bus.CourseBUS;
 import com.school.schoolmanagement.bus.DepartmentBUS;
 import com.school.schoolmanagement.bus.OnlineCourseBUS;
 import com.school.schoolmanagement.bus.OnsiteCourseBUS;
+import com.school.schoolmanagement.gui.components.*;
 import com.school.schoolmanagement.models.CourseModel;
 import com.school.schoolmanagement.models.DepartmentModel;
 import com.school.schoolmanagement.models.OnlineCourseModel;
 import com.school.schoolmanagement.models.OnsiteCourseModel;
-
-import org.netbeans.lib.awtextra.*;
 
 public class CourseManagement extends JPanel {
     private List<CourseModel> courseList = CourseBUS.getInstance().getAllModels();
@@ -75,40 +72,40 @@ public class CourseManagement extends JPanel {
 
         panelHeader = new JPanel();
         panelInfor = new JPanel();
-        labelId = new JLabel();
-        textFieldId = new JTextField();
-        labelTitle = new JLabel();
-        textFieldTitle = new JTextField();
-        labelCredits = new JLabel();
-        textFieldCredit = new JTextField();
-        labelDepartment = new JLabel();
+        labelId = new FormLabel();
+        textFieldId = new FormTextField();
+        labelTitle = new FormLabel();
+        textFieldTitle = new FormTextField();
+        labelCredits = new FormLabel();
+        textFieldCredit = new FormTextField();
+        labelDepartment = new FormLabel();
         departmentComboBox = new JComboBox<>();
         panelCourse = new JPanel();
         radioOnline = new JRadioButton();
         radioOnsite = new JRadioButton();
         panelButton = new JPanel();
-        buttonAdd = new JButton();
-        buttonDelete = new JButton();
-        buttonUpdate = new JButton();
-        buttonRefresh = new JButton();
+        buttonAdd = new FormButton();
+        buttonDelete = new FormButton();
+        buttonUpdate = new FormButton();
+        buttonRefresh = new FormButton();
         panel = new JPanel();
         panelSearch = new JPanel();
-        textFieldSearch = new JTextField();
+        textFieldSearch = new TextFieldSearch();
         comboBoxDepartment = new JComboBox<>();
         comboBoxStatus = new JComboBox<>();
-        buttonSearch = new JButton();
+        buttonSearch = new FormButton();
         scrollPane = new JScrollPane();
-        table = new JTable();
+        table = new Table();
         panel_online = new JPanel();
         panel_onSite = new JPanel();
-        labelURL = new JLabel();
-        txtURL = new JTextField();
-        labelLocation = new JLabel();
-        labelDays = new JLabel();
-        labelTime = new JLabel();
-        txtLocation = new JTextField();
-        txtDays = new JTextField();
-        txtTime = new JTextField();
+        labelURL = new FormLabel();
+        txtURL = new FormTextField();
+        labelLocation = new FormLabel();
+        labelDays = new FormLabel();
+        labelTime = new FormLabel();
+        txtLocation = new FormTextField();
+        txtDays = new FormTextField();
+        txtTime = new FormTextField();
 
         ButtonGroup btnGroup = new ButtonGroup();
         btnGroup.add(radioOnline);
@@ -128,7 +125,7 @@ public class CourseManagement extends JPanel {
 
         labelId.setHorizontalAlignment(SwingConstants.RIGHT);
         labelId.setText("ID Course");
-        labelId.setPreferredSize(new Dimension(100, 16));
+        labelId.setPreferredSize(new Dimension(150, 26));
 
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -136,7 +133,7 @@ public class CourseManagement extends JPanel {
 
         panelInfor.add(labelId, gridBagConstraints);
 
-        textFieldId.setPreferredSize(new Dimension(220, 22));
+        textFieldId.setPreferredSize(new Dimension(220, 28));
 
         gridBagConstraints = new GridBagConstraints();
 
@@ -148,7 +145,7 @@ public class CourseManagement extends JPanel {
 
         labelTitle.setHorizontalAlignment(SwingConstants.RIGHT);
         labelTitle.setText("Title");
-        labelTitle.setPreferredSize(new Dimension(100, 16));
+        labelTitle.setPreferredSize(new Dimension(150, 26));
 
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -156,7 +153,7 @@ public class CourseManagement extends JPanel {
 
         panelInfor.add(labelTitle, gridBagConstraints);
 
-        textFieldTitle.setPreferredSize(new Dimension(220, 22));
+        textFieldTitle.setPreferredSize(new Dimension(220, 28));
 
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 2;
@@ -166,7 +163,7 @@ public class CourseManagement extends JPanel {
 
         labelCredits.setHorizontalAlignment(SwingConstants.RIGHT);
         labelCredits.setText("Credits");
-        labelCredits.setPreferredSize(new Dimension(100, 16));
+        labelCredits.setPreferredSize(new Dimension(150, 26));
 
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -174,7 +171,7 @@ public class CourseManagement extends JPanel {
 
         panelInfor.add(labelCredits, gridBagConstraints);
 
-        textFieldCredit.setPreferredSize(new Dimension(220, 22));
+        textFieldCredit.setPreferredSize(new Dimension(220, 28));
 
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 2;
@@ -184,7 +181,7 @@ public class CourseManagement extends JPanel {
 
         labelDepartment.setHorizontalAlignment(SwingConstants.RIGHT);
         labelDepartment.setText("Department");
-        labelDepartment.setPreferredSize(new Dimension(100, 16));
+        labelDepartment.setPreferredSize(new Dimension(150, 30));
 
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -196,7 +193,8 @@ public class CourseManagement extends JPanel {
         for (DepartmentModel department : DepartmentBUS.getInstance().getAllModels()) {
             departmentComboBox.addItem(department.getName() + "");
         }
-        departmentComboBox.setPreferredSize(new Dimension(220, 22));
+        departmentComboBox.setPreferredSize(new Dimension(220, 28));
+        departmentComboBox.setFont(new Font("sanserif", 1, 12));
 
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 2;
@@ -208,7 +206,9 @@ public class CourseManagement extends JPanel {
         panelCourse.setLayout(new GridLayout(2, 2));
 
         radioOnline.setText("Online Course");
+        radioOnline.setFont(new Font("sanserif", 1, 12));
         radioOnsite.setText("Onsite Course");
+        radioOnsite.setFont(new Font("sanserif", 1, 12));
 
         panelCourse.add(radioOnline);
         panelCourse.add(radioOnsite);
@@ -218,7 +218,7 @@ public class CourseManagement extends JPanel {
         panel_online.setLayout(new FlowLayout(FlowLayout.LEFT));
         labelURL.setText("URL");
         panel_online.add(labelURL);
-        txtURL.setPreferredSize(new Dimension(160, 35));
+        txtURL.setPreferredSize(new Dimension(250, 20));
         panel_online.add(txtURL);
 
         panel_onSite.setLayout(new GridLayout(3, 2, 5, 10));
@@ -265,7 +265,7 @@ public class CourseManagement extends JPanel {
         panelSearch.setLayout(new FlowLayout(FlowLayout.LEFT));
 
         textFieldSearch.setToolTipText("");
-        textFieldSearch.setPreferredSize(new Dimension(170, 22));
+        textFieldSearch.setPreferredSize(new Dimension(200, 28));
 
         panelSearch.add(textFieldSearch);
         comboBoxDepartment.addItem("");
@@ -276,7 +276,9 @@ public class CourseManagement extends JPanel {
         panelSearch.add(comboBoxDepartment);
 
         comboBoxDepartment.setBorder(BorderFactory.createTitledBorder("Department"));
+        comboBoxDepartment.setFont(new Font("sanserif", 1, 12));
         comboBoxStatus.setBorder(BorderFactory.createTitledBorder("Status"));
+        comboBoxStatus.setFont(new Font("sanserif", 1, 12));
         panelSearch.add(comboBoxStatus);
 
         buttonSearch.setText("Search");
@@ -325,6 +327,7 @@ public class CourseManagement extends JPanel {
         }
 
         );
+        table.setRowHeight(24);
 
         radioOnline.addActionListener(e -> {
             if (radioOnline.isSelected()) {

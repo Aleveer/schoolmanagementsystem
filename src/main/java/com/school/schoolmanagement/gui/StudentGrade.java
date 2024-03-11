@@ -4,13 +4,12 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.*;
 
 import com.school.schoolmanagement.bus.CourseBUS;
 import com.school.schoolmanagement.bus.PersonBUS;
 import com.school.schoolmanagement.bus.StudentGradeBUS;
+import com.school.schoolmanagement.gui.components.*;
 import com.school.schoolmanagement.models.CourseModel;
 import com.school.schoolmanagement.models.PersonModel;
 import com.school.schoolmanagement.models.StudentGradeModel;
@@ -47,35 +46,35 @@ public class StudentGrade extends JPanel {
         panelHeader = new JPanel();
         panelInfor = new JPanel();
         panelPerson = new JPanel();
-        labelPersonID = new JLabel();
-        txtPersonID = new JTextField();
-        labelLastName = new JLabel();
-        txtLastName = new JTextField();
-        labelFirstName = new JLabel();
-        txtFirstName = new JTextField();
-        buttonAdd = new JButton();
+        labelPersonID = new FormLabel();
+        txtPersonID = new FormTextField();
+        labelLastName = new FormLabel();
+        txtLastName = new FormTextField();
+        labelFirstName = new FormLabel();
+        txtFirstName = new FormTextField();
+        buttonAdd = new FormButton();
         panelNewGrade = new JPanel();
-        labelTitle = new JLabel();
+        labelTitle = new FormLabel();
         cbTitle = new JComboBox();
-        labelGrade = new JLabel();
-        txtGrade = new JTextField();
-        buttonSave = new JButton();
+        labelGrade = new FormLabel();
+        txtGrade = new FormTextField();
+        buttonSave = new FormButton();
         scrollPane1 = new JScrollPane();
-        tableGrade = new JTable();
+        tableGrade = new Table();
         panelStudent = new JPanel();
         scrollPane2 = new JScrollPane();
-        tableStudent = new JTable();
+        tableStudent = new Table();
         panelSearch = new JPanel();
-        txtSearch = new JTextField();
-        buttonSearch = new JButton();
+        txtSearch = new TextFieldSearch();
+        buttonSearch = new FormButton();
 
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         setLayout(new BorderLayout());
 
-        txtPersonID.setEnabled(false);
+        txtPersonID.setEditable(false);
 
         panelHeader.setPreferredSize(new Dimension(635, 180));
-        panelHeader.setLayout(new GridLayout());
+        panelHeader.setLayout(new BorderLayout());
 
         panelInfor.setLayout(new BorderLayout());
 
@@ -87,7 +86,7 @@ public class StudentGrade extends JPanel {
         gridBagConstraints.gridy = 0;
         panelPerson.add(labelPersonID, gridBagConstraints);
 
-        txtPersonID.setPreferredSize(new Dimension(120, 22));
+        txtPersonID.setPreferredSize(new Dimension(180, 23));
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
@@ -99,7 +98,8 @@ public class StudentGrade extends JPanel {
         gridBagConstraints.gridy = 2;
         panelPerson.add(labelLastName, gridBagConstraints);
 
-        txtLastName.setPreferredSize(new Dimension(120, 22));
+        txtLastName.setPreferredSize(new Dimension(180, 23));
+        txtLastName.setEditable(false);
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 2;
@@ -111,7 +111,8 @@ public class StudentGrade extends JPanel {
         gridBagConstraints.gridy = 4;
         panelPerson.add(labelFirstName, gridBagConstraints);
 
-        txtFirstName.setPreferredSize(new Dimension(120, 22));
+        txtFirstName.setPreferredSize(new Dimension(180, 23));
+        txtFirstName.setEditable(false);
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 4;
@@ -137,6 +138,7 @@ public class StudentGrade extends JPanel {
         panelNewGrade.add(labelTitle, gridBagConstraints);
 
         cbTitle.setPreferredSize(new Dimension(120, 22));
+        cbTitle.setFont(new Font("sanserif", 1, 12));
 //        cbTitle.setEditable(false);
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 2;
@@ -216,7 +218,7 @@ public class StudentGrade extends JPanel {
             }
         });
 
-        panelHeader.add(panelInfor);
+        panelHeader.add(panelInfor, BorderLayout.WEST);
         // TODO: Can't scroll, fix
         String[] columnNames = { "EnrollmentID", "CourseID", "Course Name","StudentID","Student Name", "Grade" };
         Object[][] data = new Object[studentGradeModels.size()][6];
@@ -254,14 +256,11 @@ public class StudentGrade extends JPanel {
             }
         };
         tableGrade.setModel(model);
-
-
-        tableGrade.setMaximumSize(new Dimension(60, 652));
-        tableGrade.setPreferredSize(new Dimension(100, 652));
+        tableGrade.setRowHeight(26);
         scrollPane1.setViewportView(tableGrade);
 
 
-        panelHeader.add(scrollPane1);
+        panelHeader.add(scrollPane1, BorderLayout.CENTER);
 
         add(panelHeader, BorderLayout.NORTH);
 
@@ -287,9 +286,13 @@ public class StudentGrade extends JPanel {
         };
         tableStudent.setModel(model1);
         tableStudent.getTableHeader().setReorderingAllowed(false);
+        tableStudent.setRowHeight(24);
+        JPanel panelTest = new JPanel();
+        panelTest.setLayout(new BorderLayout());
         scrollPane2.setViewportView(tableStudent);
+        panelTest.add(scrollPane2, BorderLayout.CENTER);
 
-        panelStudent.add(scrollPane2, BorderLayout.CENTER);
+        panelStudent.add(panelTest, BorderLayout.CENTER);
 
         txtSearch.setPreferredSize(new Dimension(160, 22));
         panelSearch.add(txtSearch);
@@ -298,7 +301,7 @@ public class StudentGrade extends JPanel {
         buttonSearch.addActionListener(arg0 -> searchFunc());
         panelSearch.add(buttonSearch);
 
-        panelStudent.add(panelSearch, BorderLayout.SOUTH);
+        panelStudent.add(panelSearch, BorderLayout.PAGE_START);
 
         add(panelStudent, BorderLayout.PAGE_END);
 

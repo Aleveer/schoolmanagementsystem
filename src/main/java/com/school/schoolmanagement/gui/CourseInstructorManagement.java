@@ -1,6 +1,7 @@
 package com.school.schoolmanagement.gui;
 
 import com.school.schoolmanagement.bus.*;
+import com.school.schoolmanagement.gui.components.*;
 import com.school.schoolmanagement.models.*;
 
 import javax.swing.*;
@@ -33,6 +34,7 @@ public class CourseInstructorManagement extends JPanel {
                             }
                         }
         );
+        tbList.setRowHeight(24);
 
         txtUrl.setEditable(false);
         txtDays.setEditable(false);
@@ -314,29 +316,29 @@ public class CourseInstructorManagement extends JPanel {
         panelHeader = new JPanel();
         panelPerson = new JPanel();
         panelSearch = new JPanel();
-        labelPersonID = new JLabel();
+        labelPersonID = new FormLabel();
         cbPersonId = new JComboBox<>();
         panelOnlineCourse = new JPanel();
-        labelCourseID = new JLabel();
+        labelCourseID = new FormLabel();
         cbCouseOnlineId = new JComboBox<>();
-        labelURL = new JLabel();
-        txtUrl = new JTextField();
+        labelURL = new FormLabel();
+        txtUrl = new FormTextField();
         panelOnsiteCourse = new JPanel();
-        labelOnsiteCourseID = new JLabel();
+        labelOnsiteCourseID = new FormLabel();
         cbCourseOnsiteId = new JComboBox<>();
-        labelLocation = new JLabel();
-        txtLocation = new JTextField();
-        labelDay = new JLabel();
-        txtDays = new JTextField();
-        labelTime = new JLabel();
-        txtTime = new JTextField();
+        labelLocation = new FormLabel();
+        txtLocation = new FormTextField();
+        labelDay = new FormLabel();
+        txtDays = new FormTextField();
+        labelTime = new FormLabel();
+        txtTime = new FormTextField();
         panelButton = new JPanel();
-        btnAssign = new JButton();
-        btnSearch = new JButton();
-        txtSearch = new JTextField();
-        buttonNoAssign = new JButton();
+        btnAssign = new FormButton();
+        btnSearch = new FormButton();
+        txtSearch = new TextFieldSearch();
+        buttonNoAssign = new FormButton();
         scrollPane = new JScrollPane();
-        tbList = new JTable();
+        tbList = new Table();
 
         setLayout(new BorderLayout());
 
@@ -349,6 +351,8 @@ public class CourseInstructorManagement extends JPanel {
         panelPerson.add(labelPersonID);
 
         panelPerson.add(cbPersonId);
+        cbPersonId.setPreferredSize(new Dimension(220, 28));
+        cbPersonId.setFont(new Font("sanserif", 1, 12));
 
         panelHeader.add(panelPerson);
 
@@ -359,6 +363,8 @@ public class CourseInstructorManagement extends JPanel {
         panelOnlineCourse.add(labelCourseID);
 
         panelOnlineCourse.add(cbCouseOnlineId);
+        cbCouseOnlineId.setPreferredSize(new Dimension(220, 28));
+        cbCouseOnlineId.setFont(new Font("sanserif", 1, 12));
 
         labelURL.setText("URL");
         panelOnlineCourse.add(labelURL);
@@ -375,6 +381,8 @@ public class CourseInstructorManagement extends JPanel {
         panelOnsiteCourse.add(labelOnsiteCourseID);
 
         panelOnsiteCourse.add(cbCourseOnsiteId);
+        cbCourseOnsiteId.setPreferredSize(new Dimension(220, 28));
+        cbCourseOnsiteId.setFont(new Font("sanserif", 1, 12));
 
         labelLocation.setText("Location");
         panelOnsiteCourse.add(labelLocation);
@@ -407,7 +415,7 @@ public class CourseInstructorManagement extends JPanel {
 
 //        Add search text field and button search
         panelSearch.setLayout(new FlowLayout(FlowLayout.LEFT));
-        txtSearch.setPreferredSize(new Dimension(180, 22));
+        txtSearch.setPreferredSize(new Dimension(200, 28));
         btnSearch.setText("Search");
         panelSearch.add(txtSearch);
         panelSearch.add(btnSearch);
