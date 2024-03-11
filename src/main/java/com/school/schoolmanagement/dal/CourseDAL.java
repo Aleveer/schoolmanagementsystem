@@ -29,7 +29,6 @@ public class CourseDAL {
             int departmentID = rs.getInt("departmentID");
             return new CourseModel(id, title, credit, departmentID);
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return null;
@@ -52,7 +51,6 @@ public class CourseDAL {
     public int insert(CourseModel course) {
         String insertSql = "INSERT INTO Course (CourseID, Title, Credits, DepartmentID) VALUES (?, ?, ?, ?)";
         Object[] args = { course.getId(), course.getTitle(), course.getCredit(), course.getDepartmentID() };
-        System.out.println("hehe: " + insertSql + " : " + Arrays.toString(args));
         try {
             return DatabaseConnect.executeUpdate(insertSql, args);
         } catch (SQLException e) {
